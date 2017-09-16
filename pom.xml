@@ -1,127 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2017 Google Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<!-- [START pom] -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.google.appengine.demos</groupId>
+  <artifactId>springboot-appengine-standard</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
 
-  <groupId>com.example.appengine_standard_java8</groupId>
-  <artifactId>helloworld_java8_GAE_standard</artifactId>
+  <name>springboot-appengine-standard</name>
+  <description>Demo project for Spring Boot</description>
 
-  <!-- [START_EXCLUDE] -->
-  <parent>                              <!-- Get parameters and allow bulk testing -->
-    <artifactId>getting-started-java</artifactId>
-    <groupId>com.example</groupId>
-    <version>1.0.0</version>
-    <relativePath>../..</relativePath>
-  </parent>
-  <!-- [END_EXCLUDE] -->
-
-<!-- [START properties] -->
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-
-<!-- [START_EXCLUDE] -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <archiveClasses>true</archiveClasses>
-    <failOnMissingWebXml>false</failOnMissingWebXml>
-<!-- [END_EXCLUDE] -->
-
+    <spring.boot.version>1.5.6.RELEASE</spring.boot.version> <!-- DO NOT UPDATE w/o MANUAL TESTING -->
+    <java.version>1.8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
-<!-- [END properties] -->
 
   <dependencies>
-    <!-- Compile/runtime dependencies -->
-    <!-- [START api-dependencies] -->
     <dependency>
-      <groupId>com.google.appengine</groupId>
-      <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.9.54</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring.boot.version}</version>
+            <!-- Exclude Tomcat so that it doesn't conflict w/ Jetty server -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <!-- [END api-dependencies] -->
 
-    <!-- [START servlet] -->
+    <!-- Exclude any jul-to-slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Include Servlet API -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.1.0</version>
-      <type>jar</type>
       <scope>provided</scope>
     </dependency>
-    <!-- [END servlet] -->
 
     <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <!-- [START_EXCLUDE] -->
-    <!-- Test Dependencies -->
-    <dependency>
-      <groupId>com.google.appengine</groupId>
-      <artifactId>appengine-testing</artifactId>
-      <version>1.9.54</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${spring.boot.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.appengine</groupId>
-      <artifactId>appengine-api-stubs</artifactId>
-      <version>1.9.54</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.appengine</groupId>
-      <artifactId>appengine-tools-sdk</artifactId>
-      <version>1.9.54</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.truth</groupId>
-      <artifactId>truth</artifactId>
-      <version>0.34</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.8.47</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- [END_EXCLUDE] -->
   </dependencies>
 
+  <dependencyManagement>
+     <dependencies>
+        <dependency>
+            <!-- Import dependency management from Spring Boot -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring.boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
-    <!-- for hot reload of the web application-->
-    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
     <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+      </plugin>
       <!-- [START cloudplugin] -->
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
@@ -132,8 +87,7 @@ limitations under the License.
       </plugin>
       <!-- [END cloudplugin] -->
 
-      <!-- [START_EXCLUDE] -->
-      <plugin>
+       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <version>2.4</version>
@@ -146,75 +100,24 @@ limitations under the License.
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <excludes>
+            <exclude>javax.servlet:javax.servlet-api</exclude>
+            <exclude>com.google.guava:guava</exclude> <!-- avoid android version -->
+          </excludes>
+        </configuration>
       </plugin>
 
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
 
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.6</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.2</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>3.5</version>
-                </requireMavenVersion>
-                <requirePluginVersions>
-                   <message>Best Practice is to always define plugin versions!</message>
-                   <banLatest>true</banLatest>
-                   <banRelease>true</banRelease>
-                   <phases>clean,deploy,verify,appengine:run,appengine:deploy,appengine:update,appengine:devappaserver,site</phases>
-                </requirePluginVersions>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- [END_EXCLUDE] -->
     </plugins>
   </build>
+
+
 </project>
-<!-- [END pom] -->
