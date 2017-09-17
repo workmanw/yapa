@@ -22,3 +22,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Ember Build ###
+src/main/webapp/ember-dist

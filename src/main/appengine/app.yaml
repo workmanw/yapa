@@ -1,0 +1,8 @@
+runtime: java8
+
+handlers:
+- url: /.*
+  script: ignored
+
+manual_scaling:
+  instances: 1
