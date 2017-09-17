@@ -3,7 +3,11 @@ package io.workmanw.yapa.models;
 import com.jmethods.catatumbo.EntityManagerFactory;
 import com.jmethods.catatumbo.EntityManager;
 
-public class BaseModel {
+import com.google.gson.JsonObject;
+
+public class BaseModel extends Object {
+  public BaseModel() { }
+
   public BaseModel createModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
@@ -20,5 +24,12 @@ public class BaseModel {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.delete(this);
+  }
+
+  public JsonObject toJson() {
+    return new JsonObject();
+  }
+
+  public void fromJson(JsonObject jsonObj) {
   }
 }

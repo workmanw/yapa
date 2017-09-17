@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 
 @Entity(kind="Album")
 public class AlbumModel extends BaseModel {
+  public AlbumModel() { }
+
   @Identifier
   private long id;
 
