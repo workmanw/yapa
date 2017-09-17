@@ -40,12 +40,10 @@ public class AlbumController {
   @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
   public String createEntity(@RequestBody String body) {
     JsonObject jsonAlbum = this.extractEntityJson(body);
-
     AlbumModel album = new AlbumModel();
-    album.setName(jsonAlbum.get("name").getAsString());
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    album = em.insert(album);
+
+    album.fromJson(jsonAlbum);
+    album = (AlbumModel) album.createModel();
 
     return this.serialize(album);
   }
@@ -61,10 +59,8 @@ public class AlbumController {
     JsonObject jsonAlbum = this.extractEntityJson(body);
     AlbumModel album = this.getEntityById(id);
 
-    album.setName(jsonAlbum.get("name").getAsString());
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    em.update(album);
+    album.fromJson(jsonAlbum);
+    album.saveModel();
 
     return this.serialize(album);
   }
@@ -72,24 +68,21 @@ public class AlbumController {
   @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
   public String deleteEntity(@PathVariable long id) {
     AlbumModel album = this.getEntityById(id);
-
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    em.delete(album);
+    album.deleteModel();
     album = null;
 
     return this.serialize(album);
   }
 
-  protected static String serialize(AlbumModel album) {
+  protected String serialize(AlbumModel album) {
     List<AlbumModel> albums = new ArrayList<AlbumModel>();
     if (album != null) {
       albums.add(album);
     }
-    return AlbumController.serialize(albums);
+    return this.serialize(albums);
   }
 
-  protected static String serialize(List<AlbumModel> albums) {
+  protected String serialize(List<AlbumModel> albums) {
     JsonArray jsonList = new JsonArray();
     for (AlbumModel a : albums) {
       jsonList.add(a.toJson());
@@ -100,18 +93,16 @@ public class AlbumController {
     return obj.toString();
   }
 
-  protected static JsonObject extractEntityJson(String body) {
+  protected JsonObject extractEntityJson(String body) {
     JsonParser parser = new JsonParser();
     JsonObject json = parser.parse(body).getAsJsonObject();
     JsonObject entityJson = json.getAsJsonObject("album");
     return entityJson;
   }
 
-  protected static AlbumModel getEntityById(long id) {
+  protected AlbumModel getEntityById(long id) {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
-
-    AlbumModel entity = em.load(AlbumModel.class, id);
-    return entity;
+    return em.load(AlbumModel.class, id);
   }
 }

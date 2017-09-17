@@ -6,7 +6,7 @@ import com.jmethods.catatumbo.Identifier;
 import com.google.gson.JsonObject;
 
 @Entity(kind="Album")
-public class AlbumModel {
+public class AlbumModel extends BaseModel {
   @Identifier
   private long id;
 
@@ -29,9 +29,13 @@ public class AlbumModel {
   }
 
   public JsonObject toJson() {
-    JsonObject obj = new JsonObject();
-    obj.addProperty("id", this.id);
-    obj.addProperty("name", this.name);
-    return obj;
+    JsonObject jsonObj = new JsonObject();
+    jsonObj.addProperty("id", this.id);
+    jsonObj.addProperty("name", this.name);
+    return jsonObj;
+  }
+
+  public void fromJson(JsonObject jsonObj) {
+    this.setName(jsonObj.get("name").getAsString());
   }
 }
