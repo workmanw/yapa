@@ -7,6 +7,11 @@ import config from './config/environment';
 import './models/custom-inflector-rules';
 
 const App = Ember.Application.extend({
+  init() {
+    this._super(...arguments);
+    window.app = this;
+  },
+
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver

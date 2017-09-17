@@ -20,12 +20,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1/album")
 public class AlbumController {
   @RequestMapping(method = RequestMethod.GET)
-  public String query() {
+  public String queryEntities() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
 
@@ -33,9 +34,65 @@ public class AlbumController {
     QueryResponse<AlbumModel> response = em.executeEntityQueryRequest(AlbumModel.class, request);
     List<AlbumModel> albums = response.getResults();
 
+    return this.serialize(albums);
+  }
+
+  @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
+  public String createEntity(@RequestBody String body) {
+    JsonObject jsonAlbum = this.extractEntityJson(body);
+
+    AlbumModel album = new AlbumModel();
+    album.setName(jsonAlbum.get("name").getAsString());
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    album = em.insert(album);
+
+    return this.serialize(album);
+  }
+
+  @RequestMapping(value="/{id}", method = RequestMethod.GET)
+  public String getEntity(@PathVariable long id) {
+    AlbumModel album = this.getEntityById(id);
+    return this.serialize(album);
+  }
+
+  @RequestMapping(value="/{id}", method = RequestMethod.PUT)
+  public String putEntity(@PathVariable long id, @RequestBody String body) {
+    JsonObject jsonAlbum = this.extractEntityJson(body);
+    AlbumModel album = this.getEntityById(id);
+
+    album.setName(jsonAlbum.get("name").getAsString());
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    em.update(album);
+
+    return this.serialize(album);
+  }
+
+  @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+  public String deleteEntity(@PathVariable long id) {
+    AlbumModel album = this.getEntityById(id);
+
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    em.delete(album);
+    album = null;
+
+    return this.serialize(album);
+  }
+
+  protected static String serialize(AlbumModel album) {
+    List<AlbumModel> albums = new ArrayList<AlbumModel>();
+    if (album != null) {
+      albums.add(album);
+    }
+    return AlbumController.serialize(albums);
+  }
+
+  protected static String serialize(List<AlbumModel> albums) {
     JsonArray jsonList = new JsonArray();
     for (AlbumModel a : albums) {
-    	jsonList.add(a.toJson());
+      jsonList.add(a.toJson());
     }
 
     JsonObject obj = new JsonObject();
@@ -43,27 +100,18 @@ public class AlbumController {
     return obj.toString();
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
-  public String create(@RequestBody String body) {
+  protected static JsonObject extractEntityJson(String body) {
     JsonParser parser = new JsonParser();
     JsonObject json = parser.parse(body).getAsJsonObject();
-    JsonObject jsonAlbum = json.getAsJsonObject("album");
-
-    AlbumModel albumModel = new AlbumModel();
-    albumModel.setName(jsonAlbum.get("name").getAsString());
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    em.insert(albumModel);
-
-    JsonObject obj = new JsonObject();
-    JsonArray jsonList = new JsonArray();
-    jsonList.add(albumModel.toJson());
-    obj.add("album", jsonList);
-    return obj.toString();
+    JsonObject entityJson = json.getAsJsonObject("album");
+    return entityJson;
   }
 
-  @RequestMapping(value="/{id}", method = RequestMethod.GET)
-  public String getAlbum(@PathVariable long id) {
-    return String.format("Album: %d", id);
+  protected static AlbumModel getEntityById(long id) {
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+
+    AlbumModel entity = em.load(AlbumModel.class, id);
+    return entity;
   }
 }
