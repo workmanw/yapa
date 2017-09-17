@@ -55,6 +55,12 @@
       <version>${spring.boot.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.jmethods</groupId>
+      <artifactId>catatumbo</artifactId>
+      <version>2.3.0</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
