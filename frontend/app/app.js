@@ -3,6 +3,9 @@ import Resolver from './resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
 
+// sets up Ember.Inflector
+import './models/custom-inflector-rules';
+
 const App = Ember.Application.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,

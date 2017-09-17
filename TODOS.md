@@ -1,0 +1,2 @@
+- [ ] Build Java Controller Base
+- [ ] Use maven to copy ember build into target, instead of src/
