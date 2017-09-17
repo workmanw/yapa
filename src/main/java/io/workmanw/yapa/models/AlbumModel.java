@@ -3,18 +3,20 @@ package io.workmanw.yapa.models;
 import com.jmethods.catatumbo.Entity;
 import com.jmethods.catatumbo.Identifier;
 
-@Entity
+import com.google.gson.JsonObject;
+
+@Entity(kind="Album")
 public class AlbumModel {
   @Identifier
-  private String id;
+  private long id;
 
   private String name;
 
-  public String getId() {
+  public long getId() {
     return this.id;
   }
 
-  public void setId(String id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -24,5 +26,12 @@ public class AlbumModel {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public JsonObject toJson() {
+    JsonObject obj = new JsonObject();
+    obj.addProperty("id", this.id);
+    obj.addProperty("name", this.name);
+    return obj;
   }
 }
