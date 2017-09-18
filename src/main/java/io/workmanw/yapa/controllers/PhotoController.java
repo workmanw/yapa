@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.blobstore.UploadOptions;
-
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
 
 import com.google.gson.JsonObject;
 
@@ -39,15 +37,17 @@ public class PhotoController extends BaseController<PhotoModel> {
   }
 
   public String uploadCallback(BlobKey bk, Map<String, String> parameters) {
-    JsonObject jsonObj = new JsonObject();
-    jsonObj.addProperty("blobKey", bk.getKeyString());
-    jsonObj.addProperty("servingUrl", this.getServingUrl(bk));
-    return jsonObj.toString();
+    BlobInfo bi = this.getBlobInfo(bk);
+
+    PhotoModel photo = this.createModelInstance();
+    photo.fromBlobInfo(bi);
+    photo = (PhotoModel) photo.createModel();
+
+    return this.serialize(photo);
   }
 
-  protected String getServingUrl(BlobKey bk) {
-    ImagesService imagesService = ImagesServiceFactory.getImagesService();
-    ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(bk);
-    return imagesService.getServingUrl(options);
+  protected BlobInfo getBlobInfo(BlobKey bk) {
+    BlobInfoFactory f = new BlobInfoFactory();
+    return f.loadBlobInfo(bk);
   }
 }

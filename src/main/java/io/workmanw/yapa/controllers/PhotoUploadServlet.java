@@ -31,8 +31,6 @@ public class PhotoUploadServlet extends HttpServlet {
     BlobKey blobKey = blobKeys.get(0);
     PhotoController pc = new PhotoController();
     res.getWriter().println(pc.uploadCallback(blobKey, parameters));
-
-    // https://stackoverflow.com/questions/27732133/httpservletrequest-getparametermap-vs-getparameternames
   }
 
   protected Map<String, String> mapParameters(HttpServletRequest req) {
