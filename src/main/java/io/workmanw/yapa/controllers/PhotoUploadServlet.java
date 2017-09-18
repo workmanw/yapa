@@ -3,6 +3,8 @@ import io.workmanw.yapa.controllers.PhotoController;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +27,22 @@ public class PhotoUploadServlet extends HttpServlet {
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
     List<BlobKey> blobKeys = blobs.get("file");
 
+    Map<String, String> parameters = this.mapParameters(req);
+    BlobKey blobKey = blobKeys.get(0);
     PhotoController pc = new PhotoController();
-    res.getWriter().println(pc.uploadCallback(blobKeys.get(0)));
+    res.getWriter().println(pc.uploadCallback(blobKey, parameters));
+
+    // https://stackoverflow.com/questions/27732133/httpservletrequest-getparametermap-vs-getparameternames
+  }
+
+  protected Map<String, String> mapParameters(HttpServletRequest req) {
+    Map<String, String> map = new HashMap<String, String>();
+    Enumeration<String> parameterNames = req.getParameterNames();
+    while (parameterNames.hasMoreElements()) {
+      String key = (String) parameterNames.nextElement();
+      String val = req.getParameter(key);
+      map.put(key, val);
+    }
+    return map;
   }
 }
