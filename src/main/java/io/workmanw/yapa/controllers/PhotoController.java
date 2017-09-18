@@ -1,15 +1,16 @@
 package io.workmanw.yapa.controllers;
 
+import io.workmanw.yapa.models.PhotoModel;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.workmanw.yapa.models.PhotoModel;
+import com.google.gson.JsonObject;
 
 @RestController
 @RequestMapping("/api/v1/photo")
@@ -19,15 +20,16 @@ public class PhotoController extends BaseController<PhotoModel> {
     entityKind = "Photo";
   }
 
-  @RequestMapping(value="upload_url", method=RequestMethod.GET)
+  @RequestMapping(value="/upload_url", method=RequestMethod.GET)
   public String getUploadUrl() {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    return blobstoreService.createUploadUrl("/api/v1/photo/upload_callback");
+    String uploadUrl = blobstoreService.createUploadUrl("/_photo_upload");
+    JsonObject jsonObj = new JsonObject();
+    jsonObj.addProperty("uploadUrl", uploadUrl);
+    return jsonObj.toString();
   }
 
-  @RequestMapping(value="upload_callback", method=RequestMethod.GET)
-  public String uploadCallback(@RequestBody String body) {
-    // JsonObject json = this.extractJson(body);
-    return body;
+  public String uploadCallback(BlobKey bk) {
+    return bk.getKeyString();
   }
 }

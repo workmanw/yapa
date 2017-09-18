@@ -8,6 +8,7 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('albums', { path: '/albums' });
+  this.route('album', { path: '/album/:album_id' });
 });
 
 export default Router;

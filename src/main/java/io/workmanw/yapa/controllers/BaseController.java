@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import javax.servlet.annotation.WebServlet;
 
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
@@ -92,7 +93,7 @@ public class BaseController<T extends BaseModel> {
     JsonParser parser = new JsonParser();
     return parser.parse(body).getAsJsonObject();
   }
-  
+
   protected JsonObject extractEntityJson(String body) {
     JsonObject json = this.extractJson(body);
     return json.getAsJsonObject(this.entityKind.toLowerCase());

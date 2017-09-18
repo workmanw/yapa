@@ -2,9 +2,10 @@
 
 {{input value=newAlbumName}} <button {{action "createAlbum"}}>Create</button>
 
-
 <ul>
-  {{#each model as |album|}}
-    <li>{{album.name}} <button {{action "deleteAlbum" album}}>X</button></li>
+  {{#each albums as |album|}}
+    <li>
+      {{#link-to "album" album.id}}{{album.name}}{{/link-to}}
+    </li>
   {{/each}}
 </ul>
