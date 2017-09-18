@@ -6,8 +6,10 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 
+import com.jmethods.catatumbo.DatastoreKey;
 import com.jmethods.catatumbo.Entity;
 import com.jmethods.catatumbo.Identifier;
+import com.jmethods.catatumbo.Key;
 
 import com.google.gson.JsonObject;
 
@@ -17,6 +19,10 @@ public class PhotoModel extends BaseModel {
 
   @Identifier
   private long id;
+  @Key
+  private DatastoreKey key;
+
+	private DatastoreKey album;
   private String photoName;
   private String blobKey;
   private String contentType;
@@ -26,11 +32,26 @@ public class PhotoModel extends BaseModel {
   private long filesize;
   private String servingUrl;
 
+
   public long getId() {
     return this.id;
   }
   public void setId(long id) {
     this.id = id;
+  }
+
+  public DatastoreKey getKey() {
+    return this.key;
+  }
+  public void setKey(DatastoreKey key) {
+    this.key = key;
+  }
+
+  public DatastoreKey getAlbum() {
+    return this.album;
+  }
+  public void setAlbum(DatastoreKey album) {
+    this.album = album;
   }
 
   public String getPhotoName() {
@@ -92,6 +113,7 @@ public class PhotoModel extends BaseModel {
   public JsonObject toJson() {
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("id", this.getId());
+    jsonObj.addProperty("album", this.getAlbum().id());
     jsonObj.addProperty("photoName", this.getPhotoName());
     jsonObj.addProperty("blobKey", this.getBlobKey());
     jsonObj.addProperty("content", this.getContentType());
@@ -103,7 +125,9 @@ public class PhotoModel extends BaseModel {
     return jsonObj;
   }
 
-  public void fromBlobInfo(BlobInfo bi) {
+  public void fromBlobInfo(AlbumModel album, BlobInfo bi) {
+    this.setAlbum(album.getKey());
+
     BlobKey bk = bi.getBlobKey();
     this.setPhotoName(bi.getFilename());
 

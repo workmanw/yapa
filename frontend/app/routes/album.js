@@ -4,10 +4,14 @@ export default Ember.Route.extend({
   store: Ember.inject.service(),
 
   setupController(controller, model) {
-    controller.set('album', model);
+    controller.set('album', model.album);
+    controller.set('photos', model.photos.toArray());
   },
 
   model(params) {
-    return this.get('store').findRecord('album', params.album_id);
+    return Ember.RSVP.hash({
+      album: this.get('store').findRecord('album', params.album_id),
+      photos: this.get('store').query('photo', { album: params.album_id })
+    });
   }
 });
