@@ -23,7 +23,7 @@ public class BaseController<T extends BaseModel> {
   protected Class<T> modelClass;
   protected String entityKind;
 
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(method=RequestMethod.GET)
   public String queryEntities() {
     EntityManager em = this.getEntityManager();
 
@@ -34,7 +34,7 @@ public class BaseController<T extends BaseModel> {
     return this.serialize(entities);
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
+  @RequestMapping(method=RequestMethod.POST, consumes={"application/json"})
   public String createEntity(@RequestBody String body) {
     JsonObject jsonEntity = this.extractEntityJson(body);
     T entity = this.createModelInstance();
@@ -45,13 +45,13 @@ public class BaseController<T extends BaseModel> {
     return this.serialize(entity);
   }
 
-  @RequestMapping(value="/{id}", method = RequestMethod.GET)
+  @RequestMapping(value="/{id}", method=RequestMethod.GET)
   public String getEntity(@PathVariable long id) {
     T entity = this.getEntityById(id);
     return this.serialize(entity);
   }
 
-  @RequestMapping(value="/{id}", method = RequestMethod.PUT)
+  @RequestMapping(value="/{id}", method=RequestMethod.PUT)
   public String putEntity(@PathVariable long id, @RequestBody String body) {
     JsonObject jsonEntity = this.extractEntityJson(body);
     T entity = this.getEntityById(id);
@@ -62,7 +62,7 @@ public class BaseController<T extends BaseModel> {
     return this.serialize(entity);
   }
 
-  @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+  @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
   public String deleteEntity(@PathVariable long id) {
     T entity = this.getEntityById(id);
     entity.deleteModel();
@@ -88,11 +88,14 @@ public class BaseController<T extends BaseModel> {
     return jsonObj.toString();
   }
 
-  protected JsonObject extractEntityJson(String body) {
+  protected JsonObject extractJson(String body) {
     JsonParser parser = new JsonParser();
-    JsonObject json = parser.parse(body).getAsJsonObject();
-    JsonObject entityJson = json.getAsJsonObject(this.entityKind.toLowerCase());
-    return entityJson;
+    return parser.parse(body).getAsJsonObject();
+  }
+  
+  protected JsonObject extractEntityJson(String body) {
+    JsonObject json = this.extractJson(body);
+    return json.getAsJsonObject(this.entityKind.toLowerCase());
   }
 
   protected T getEntityById(long id) {
