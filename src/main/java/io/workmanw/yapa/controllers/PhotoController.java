@@ -6,6 +6,7 @@ import io.workmanw.yapa.models.PhotoModel;
 import java.util.Map;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +63,7 @@ public class PhotoController extends BaseController<PhotoModel> {
     AlbumModel album = this.fetchAlbum(parameters.get("album"));
     PhotoModel photo = this.createModelInstance();
     photo.fromBlobInfo(album, bi);
+    photo.populateVisionData();
     photo = (PhotoModel) photo.createModel();
 
     return this.serialize(photo);

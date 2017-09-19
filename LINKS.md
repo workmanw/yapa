@@ -11,3 +11,10 @@ http://catatumbo.io/quick-start.html
 
 # Ember
 http://nortpoint.io/2016/10/13/lets-make-friends-with-spring-and-emberjs/
+
+
+# Vision
+https://github.com/GoogleCloudPlatform/java-docs-samples/blob/master/vision/cloud-client/src/main/java/com/example/vision/Detect.java
+https://cloud.google.com/vision/docs/reference/libraries#client-libraries-install-java
+https://cloud.google.com/vision/docs/reference/rpc/google.cloud.vision.v1#google.cloud.vision.v1.EntityAnnotation
+https://developers.google.com/resources/api-libraries/documentation/vision/v1/java/latest/com/google/api/services/vision/v1/model/EntityAnnotation.html

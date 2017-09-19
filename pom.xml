@@ -61,7 +61,13 @@
       <artifactId>appengine-api-1.0-sdk</artifactId>
       <version>1.9.54</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-vision</artifactId>
+      <version>0.23.1-beta</version>
+    </dependency>
+
     <dependency>
       <groupId>com.jmethods</groupId>
       <artifactId>catatumbo</artifactId>

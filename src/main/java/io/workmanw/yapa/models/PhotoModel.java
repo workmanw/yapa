@@ -1,5 +1,7 @@
 package io.workmanw.yapa.models;
 
+import io.workmanw.yapa.utils.VisionClient;
+
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.images.ImagesService;
@@ -9,8 +11,15 @@ import com.google.appengine.api.images.ServingUrlOptions;
 import com.jmethods.catatumbo.DatastoreKey;
 import com.jmethods.catatumbo.Entity;
 import com.jmethods.catatumbo.Identifier;
+import com.jmethods.catatumbo.Exploded;
+import com.jmethods.catatumbo.Embedded;
 import com.jmethods.catatumbo.Key;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @Entity(kind="Photo")
@@ -32,6 +41,7 @@ public class PhotoModel extends BaseModel {
   private long filesize;
   private String servingUrl;
 
+  private List<VisionLabel> visionLabels;
 
   public long getId() {
     return this.id;
@@ -110,6 +120,13 @@ public class PhotoModel extends BaseModel {
     this.servingUrl = servingUrl;
   }
 
+  public List<VisionLabel> getVisionLabels() {
+    return this.visionLabels;
+  }
+  public void setVisionLabels(List<VisionLabel> visionLabels) {
+    this.visionLabels = visionLabels;
+  }
+
   public JsonObject toJson() {
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("id", this.getId());
@@ -122,7 +139,24 @@ public class PhotoModel extends BaseModel {
     jsonObj.addProperty("md5", this.getMd5());
     jsonObj.addProperty("filesize", this.getFilesize());
     jsonObj.addProperty("servingUrl", this.getServingUrl());
+    jsonObj.add("vision", this.visionToJson());
+
     return jsonObj;
+  }
+
+  protected JsonObject visionToJson() {
+    JsonObject visionJsonObj = new JsonObject();
+
+    List<VisionLabel> visionLabels = this.getVisionLabels();
+    JsonArray visionLabelsJson = new JsonArray();
+    if (visionLabels != null) {
+      for (VisionLabel visionLabel : visionLabels) {
+        visionLabelsJson.add(visionLabel.toJson());
+      }
+    }
+    visionJsonObj.add("labels", visionLabelsJson);
+
+    return visionJsonObj;
   }
 
   public void fromBlobInfo(AlbumModel album, BlobInfo bi) {
@@ -142,5 +176,24 @@ public class PhotoModel extends BaseModel {
     ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(bk);
     String servingUrl = imagesService.getServingUrl(options);
     this.setServingUrl(servingUrl);
+  }
+
+  public void populateVisionData() {
+    VisionClient visionClient = new VisionClient();
+    this._populateVisionLabelData(visionClient);
+  }
+
+  public void _populateVisionLabelData(VisionClient visionClient) {
+    JsonArray visionLabelData = visionClient.detectLabelsGcs("gs:/" + this  .getGcsPath());
+    List<VisionLabel> visionLabels = new ArrayList<VisionLabel>();
+    for(JsonElement elem : visionLabelData) {
+      JsonObject obj = elem.getAsJsonObject();
+      VisionLabel label = new VisionLabel();
+      label.setMid(obj.get("mid").getAsString());
+      label.setDescription(obj.get("description").getAsString());
+      label.setScore(obj.get("score").getAsFloat());
+      visionLabels.add(label);
+    }
+    this.setVisionLabels(visionLabels);
   }
 }
