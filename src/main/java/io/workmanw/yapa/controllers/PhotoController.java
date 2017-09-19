@@ -3,9 +3,11 @@ package io.workmanw.yapa.controllers;
 import io.workmanw.yapa.models.AlbumModel;
 import io.workmanw.yapa.models.PhotoModel;
 import io.workmanw.yapa.utils.SearchClient;
+import io.workmanw.yapa.utils.TaskClient;
 
 import java.util.Map;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +21,6 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.blobstore.UploadOptions;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
 
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
@@ -33,6 +32,8 @@ import com.google.gson.JsonObject;
 @RestController
 @RequestMapping("/api/v1/photo")
 public class PhotoController extends BaseController<PhotoModel> {
+  private static final Logger log = Logger.getLogger(PhotoController.class.getName());
+
   private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
   public PhotoController() {
@@ -80,8 +81,6 @@ public class PhotoController extends BaseController<PhotoModel> {
     PhotoModel photo = this.createModelInstance();
     photo.fromBlobInfo(album, bi);
     photo = (PhotoModel) photo.createModel();
-    TasksController.scheduleCreatePhoto(photo);
-
     return this.serialize(photo);
   }
 

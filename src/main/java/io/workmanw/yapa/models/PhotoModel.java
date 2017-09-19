@@ -1,6 +1,7 @@
 package io.workmanw.yapa.models;
 
 import io.workmanw.yapa.utils.VisionClient;
+import io.workmanw.yapa.utils.SearchClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -30,12 +31,15 @@ import com.google.gson.JsonObject;
 
 @Entity(kind="Photo")
 public class PhotoModel extends BaseModel {
+  protected static Class modelClass = PhotoModel.class;
+
   public PhotoModel() { }
+  public String getKind() { return "Photo"; }
 
   @Identifier
-  private long id;
+  protected long id;
   @Key
-  private DatastoreKey key;
+  protected DatastoreKey key;
 
 	private DatastoreKey album;
   private String photoName;
@@ -227,6 +231,7 @@ public class PhotoModel extends BaseModel {
 
   public String getSearchText() {
     StringBuilder strBuilder = new StringBuilder();
+    strBuilder.append(this.getPhotoName());
     List<VisionModel> visionModels = new ArrayList<VisionModel>();
     visionModels.addAll(this.getVisionLabels());
     visionModels.addAll(this.getVisionLandmarks());
@@ -243,5 +248,22 @@ public class PhotoModel extends BaseModel {
   }
   public static PhotoModel getById(long id) {
     return BaseModel.getById(PhotoModel.class, id);
+  }
+
+  public static void postProcess(String action, String id) {
+    SearchClient sc = new SearchClient();
+
+    if (action.equals("CREATE")) {
+      PhotoModel photo = PhotoModel.getById(id);
+      photo.populateVisionData();
+      photo.saveModel();
+
+      sc.createPhotoDocument(photo);
+    } else if (action.equals("UPDATE")) {
+      PhotoModel photo = PhotoModel.getById(id);
+      sc.updatePhotoDocument(photo);
+    } else if (action.equals("DELETE")) {
+      sc.deletePhotoDocument(id);
+    }
   }
 }

@@ -1,16 +1,12 @@
 package io.workmanw.yapa.controllers;
 
+import io.workmanw.yapa.models.AlbumModel;
 import io.workmanw.yapa.models.PhotoModel;
-import io.workmanw.yapa.utils.SearchClient;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
 
 import java.util.logging.Logger;
 
@@ -19,20 +15,17 @@ import java.util.logging.Logger;
 public class TasksController {
   private static final Logger log = Logger.getLogger(TasksController.class.getName());
 
-  @RequestMapping(value="/created_photo", method=RequestMethod.POST)
-  public void createdPhoto(@RequestParam("photo") String sPhotoId) {
-    PhotoModel photo = PhotoModel.getById(sPhotoId);
-    photo.populateVisionData();
-    photo.saveModel();
-
-    SearchClient sc = new SearchClient();
-    sc.createPhotoDocument(photo);
-  }
-
-  public static void scheduleCreatePhoto(PhotoModel photo) {
-    Queue postProcessQueue = QueueFactory.getQueue("post-process");
-    TaskOptions taskOpts = TaskOptions.Builder.withUrl("/_tasks/created_photo")
-      .param("photo", Long.toString(photo.getId()));
-    postProcessQueue.add(taskOpts);
+  @RequestMapping(value="/post_process", method=RequestMethod.POST)
+  public void postProcessModel(@RequestParam String action,
+                               @RequestParam String kind,
+                               @RequestParam String id) {
+    log.info(String.format("%s -- %s -- %s", action, kind, id));
+    if (kind.equals("Album")) {
+      AlbumModel.postProcess(action, id);
+    } else if (kind.equals("Photo")) {
+      PhotoModel.postProcess(action, id);
+    } else {
+      log.severe(String.format("Cannot post-process unknown kind: \"%s\"", kind));
+    }
   }
 }

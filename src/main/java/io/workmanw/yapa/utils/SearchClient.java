@@ -35,7 +35,20 @@ public class SearchClient {
       .addField(Field.newBuilder().setName("photoName").setText(photo.getPhotoName()))
       .addField(Field.newBuilder().setName("searchText").setText(photo.getSearchText()))
       .build();
-    this.indexADocument(PHOTO_INDEX, doc);
+    this.indexPhotoDocument(doc);
+  }
+
+  public void updatePhotoDocument(PhotoModel photo) {
+    this.createPhotoDocument(photo);
+  }
+
+  public void deletePhotoDocument(String photoId) {
+    String docId = "photo-" + photoId;
+    try {
+      this.getPhotoIndex().delete(docId);
+    } catch (RuntimeException e) {
+      log.severe("Failed to delete documents " + docId);
+    }
   }
 
   public List<Long> searchPhotos(String searchText) {
@@ -47,7 +60,7 @@ public class SearchClient {
     while (true) {
       try {
         String queryString = String.format("searchText = %s", searchText);
-        Results<ScoredDocument> results = this.getIndex(PHOTO_INDEX).search(queryString);
+        Results<ScoredDocument> results = this.getPhotoIndex().search(queryString);
 
         // Iterate over the documents in the results
         for (ScoredDocument document : results) {
@@ -75,9 +88,7 @@ public class SearchClient {
     return new ArrayList<Long>(photoIds);
   }
 
-  protected void indexADocument(String indexName, Document document) {
-    Index index = this.getIndex(indexName);
-
+  protected void indexADocument(Index index, Document document) {
     try {
       final int maxRetry = 3;
       int attempts = 0;
@@ -104,5 +115,19 @@ public class SearchClient {
   protected Index getIndex(String indexName) {
     IndexSpec indexSpec = IndexSpec.newBuilder().setName(indexName).build();
     return SearchServiceFactory.getSearchService().getIndex(indexSpec);
+  }
+
+  protected Document getDocument(String indexName, String documentId) {
+    Index index = this.getIndex(indexName);
+    return index.get(documentId);
+  }
+
+  protected Index getPhotoIndex() {
+    return this.getIndex(PHOTO_INDEX);
+  }
+
+  protected void indexPhotoDocument(Document document) {
+    Index photoIndex = this.getPhotoIndex();
+    this.indexADocument(photoIndex, document);
   }
 }

@@ -10,12 +10,12 @@ import com.google.gson.JsonObject;
 @Entity(kind="Album")
 public class AlbumModel extends BaseModel {
   public AlbumModel() { }
+  public String getKind() { return "Album"; }
 
   @Identifier
-  private long id;
-
+  protected long id;
   @Key
-  private DatastoreKey key;
+  protected DatastoreKey key;
 
   private String name;
 
