@@ -16,7 +16,7 @@ import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
-@WebServlet(name = "_photo_upload", value = "/_photo_upload")
+@WebServlet(name = "_photo_upload", value = "/_uploads/photo")
 public class PhotoUploadServlet extends HttpServlet {
   private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 

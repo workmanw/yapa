@@ -18,6 +18,9 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.blobstore.UploadOptions;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
@@ -38,7 +41,7 @@ public class PhotoController extends BaseController<PhotoModel> {
   @RequestMapping(method=RequestMethod.GET, params = {"album"})
   public String queryEntities(@RequestParam("album") String albumId) {
     EntityManager em = this.getEntityManager();
-    AlbumModel album = this.fetchAlbum(albumId);
+    AlbumModel album = AlbumModel.getById(albumId);
 
     EntityQueryRequest request = em.createEntityQueryRequest("SELECT * FROM Photo WHERE album=@1");
     request.addPositionalBinding(album.getKey());
@@ -51,7 +54,7 @@ public class PhotoController extends BaseController<PhotoModel> {
   @RequestMapping(value="/upload_url", method=RequestMethod.GET)
   public String getUploadUrl() {
     UploadOptions uploadOpts = UploadOptions.Builder.withGoogleStorageBucketName("yapa-assets-0");
-    String uploadUrl = blobstoreService.createUploadUrl("/_photo_upload", uploadOpts);
+    String uploadUrl = blobstoreService.createUploadUrl("/_uploads/photo", uploadOpts);
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("uploadUrl", uploadUrl);
     return jsonObj.toString();
@@ -60,11 +63,14 @@ public class PhotoController extends BaseController<PhotoModel> {
   public String uploadCallback(BlobKey bk, Map<String, String> parameters) {
     BlobInfo bi = this.getBlobInfo(bk);
 
-    AlbumModel album = this.fetchAlbum(parameters.get("album"));
+    AlbumModel album = AlbumModel.getById(parameters.get("album"));
     PhotoModel photo = this.createModelInstance();
     photo.fromBlobInfo(album, bi);
-    photo.populateVisionData();
+    // photo.populateVisionData();
     photo = (PhotoModel) photo.createModel();
+
+    Queue queue = QueueFactory.getDefaultQueue();
+    queue.add(TaskOptions.Builder.withUrl("/_tasks/created_photo").param("photo", Long.toString(photo.getId())));
 
     return this.serialize(photo);
   }
@@ -72,11 +78,5 @@ public class PhotoController extends BaseController<PhotoModel> {
   protected BlobInfo getBlobInfo(BlobKey bk) {
     BlobInfoFactory f = new BlobInfoFactory();
     return f.loadBlobInfo(bk);
-  }
-
-  protected AlbumModel fetchAlbum(String sAlbumId) {
-    long albumId = Long.parseLong(sAlbumId, 10);
-    EntityManager em = this.getEntityManager();
-    return em.load(AlbumModel.class, albumId);
   }
 }

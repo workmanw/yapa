@@ -26,6 +26,17 @@ public class BaseModel extends Object {
     em.delete(this);
   }
 
+  public static <E> E getById(Class<E> modelClass, String sId) {
+    long id = Long.parseLong(sId, 10);
+    return BaseModel.getById(modelClass, id);
+  }
+
+  public static <E> E getById(Class<E> modelClass, long id) {
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    return em.load(modelClass, id);
+  }
+
   public JsonObject toJson() {
     return new JsonObject();
   }

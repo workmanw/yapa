@@ -100,8 +100,7 @@ public class BaseController<T extends BaseModel> {
   }
 
   protected T getEntityById(long id) {
-    EntityManager em = this.getEntityManager();
-    return em.load(this.modelClass, id);
+    return BaseModel.getById(this.modelClass, id);
   }
 
   protected EntityManager getEntityManager() {

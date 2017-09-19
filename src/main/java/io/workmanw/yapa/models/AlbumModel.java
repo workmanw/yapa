@@ -50,4 +50,11 @@ public class AlbumModel extends BaseModel {
   public void fromJson(JsonObject jsonObj) {
     this.setName(jsonObj.get("name").getAsString());
   }
+
+  public static AlbumModel getById(String sId) {
+    return BaseModel.getById(AlbumModel.class, sId);
+  }
+  public static AlbumModel getById(long id) {
+    return BaseModel.getById(AlbumModel.class, id);
+  }
 }

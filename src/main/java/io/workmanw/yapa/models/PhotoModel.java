@@ -15,6 +15,11 @@ import com.jmethods.catatumbo.Exploded;
 import com.jmethods.catatumbo.Embedded;
 import com.jmethods.catatumbo.Key;
 
+import com.jmethods.catatumbo.EntityManager;
+import com.jmethods.catatumbo.EntityManagerFactory;
+import com.jmethods.catatumbo.EntityQueryRequest;
+import com.jmethods.catatumbo.QueryResponse;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -195,5 +200,12 @@ public class PhotoModel extends BaseModel {
       visionLabels.add(label);
     }
     this.setVisionLabels(visionLabels);
+  }
+
+  public static PhotoModel getById(String sId) {
+    return BaseModel.getById(PhotoModel.class, sId);
+  }
+  public static PhotoModel getById(long id) {
+    return BaseModel.getById(PhotoModel.class, id);
   }
 }
