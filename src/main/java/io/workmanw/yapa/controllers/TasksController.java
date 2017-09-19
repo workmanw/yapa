@@ -1,6 +1,7 @@
 package io.workmanw.yapa.controllers;
 
 import io.workmanw.yapa.models.PhotoModel;
+import io.workmanw.yapa.utils.SearchClient;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,9 @@ public class TasksController {
     PhotoModel photo = PhotoModel.getById(sPhotoId);
     photo.populateVisionData();
     photo.saveModel();
+
+    SearchClient sc = new SearchClient();
+    sc.createPhotoDocument(photo);
   }
 
   public static void scheduleCreatePhoto(PhotoModel photo) {

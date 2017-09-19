@@ -20,6 +20,7 @@ import com.jmethods.catatumbo.EntityManagerFactory;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 
+import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -222,6 +223,19 @@ public class PhotoModel extends BaseModel {
 
     List<VisionModel> visionTexts = visionClient.detectText("gs:/" + this.getGcsPath());
     this.setVisionTexts(visionTexts);
+  }
+
+  public String getSearchText() {
+    StringBuilder strBuilder = new StringBuilder();
+    List<VisionModel> visionModels = new ArrayList<VisionModel>();
+    visionModels.addAll(this.getVisionLabels());
+    visionModels.addAll(this.getVisionLandmarks());
+    visionModels.addAll(this.getVisionLogos());
+    visionModels.addAll(this.getVisionTexts());
+    for (VisionModel visionModel : visionModels) {
+      strBuilder.append(visionModel.getDescription() + " ");
+    }
+    return strBuilder.toString();
   }
 
   public static PhotoModel getById(String sId) {

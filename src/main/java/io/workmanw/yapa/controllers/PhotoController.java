@@ -2,6 +2,7 @@ package io.workmanw.yapa.controllers;
 
 import io.workmanw.yapa.models.AlbumModel;
 import io.workmanw.yapa.models.PhotoModel;
+import io.workmanw.yapa.utils.SearchClient;
 
 import java.util.Map;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
 import com.jmethods.catatumbo.EntityManager;
+import com.jmethods.catatumbo.EntityManagerFactory;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 
@@ -58,6 +60,17 @@ public class PhotoController extends BaseController<PhotoModel> {
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("uploadUrl", uploadUrl);
     return jsonObj.toString();
+  }
+
+  @RequestMapping(value="/search", method=RequestMethod.GET)
+  public String searchPhotos(@RequestParam("search") String searchText) {
+    SearchClient sc = new SearchClient();
+    List<Long> photoIds = sc.searchPhotos(searchText);
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    List<PhotoModel> photos = em.loadById(PhotoModel.class, photoIds);
+
+    return this.serialize(photos);
   }
 
   public String uploadCallback(BlobKey bk, Map<String, String> parameters) {
