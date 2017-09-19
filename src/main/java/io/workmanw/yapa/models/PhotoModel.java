@@ -46,7 +46,10 @@ public class PhotoModel extends BaseModel {
   private long filesize;
   private String servingUrl;
 
-  private List<VisionLabel> visionLabels;
+  private List<VisionModel> visionLabels;
+  private List<VisionModel> visionLandmarks;
+  private List<VisionModel> visionLogos;
+  private List<VisionModel> visionTexts;
 
   public long getId() {
     return this.id;
@@ -125,11 +128,32 @@ public class PhotoModel extends BaseModel {
     this.servingUrl = servingUrl;
   }
 
-  public List<VisionLabel> getVisionLabels() {
+  public List<VisionModel> getVisionLabels() {
     return this.visionLabels;
   }
-  public void setVisionLabels(List<VisionLabel> visionLabels) {
+  public void setVisionLabels(List<VisionModel> visionLabels) {
     this.visionLabels = visionLabels;
+  }
+
+  public List<VisionModel> getVisionLandmarks() {
+    return this.visionLandmarks;
+  }
+  public void setVisionLandmarks(List<VisionModel> visionLandmarks) {
+    this.visionLandmarks = visionLandmarks;
+  }
+
+  public List<VisionModel> getVisionLogos() {
+    return this.visionLogos;
+  }
+  public void setVisionLogos(List<VisionModel> visionLogos) {
+    this.visionLogos = visionLogos;
+  }
+
+  public List<VisionModel> getVisionTexts() {
+    return this.visionTexts;
+  }
+  public void setVisionTexts(List<VisionModel> visionTexts) {
+    this.visionTexts = visionTexts;
   }
 
   public JsonObject toJson() {
@@ -144,24 +168,25 @@ public class PhotoModel extends BaseModel {
     jsonObj.addProperty("md5", this.getMd5());
     jsonObj.addProperty("filesize", this.getFilesize());
     jsonObj.addProperty("servingUrl", this.getServingUrl());
-    jsonObj.add("vision", this.visionToJson());
+
+    JsonObject visionJsonObj = new JsonObject();
+    visionJsonObj.add("labels", this.visionListToJson(this.getVisionLabels()));
+    visionJsonObj.add("landmarks", this.visionListToJson(this.getVisionLandmarks()));
+    visionJsonObj.add("logos", this.visionListToJson(this.getVisionLogos()));
+    visionJsonObj.add("texts", this.visionListToJson(this.getVisionTexts()));
+    jsonObj.add("vision", visionJsonObj);
 
     return jsonObj;
   }
 
-  protected JsonObject visionToJson() {
-    JsonObject visionJsonObj = new JsonObject();
-
-    List<VisionLabel> visionLabels = this.getVisionLabels();
+  protected JsonArray visionListToJson(List<VisionModel> models) {
     JsonArray visionLabelsJson = new JsonArray();
-    if (visionLabels != null) {
-      for (VisionLabel visionLabel : visionLabels) {
+    if (models != null) {
+      for (VisionModel visionLabel : models) {
         visionLabelsJson.add(visionLabel.toJson());
       }
     }
-    visionJsonObj.add("labels", visionLabelsJson);
-
-    return visionJsonObj;
+    return visionLabelsJson;
   }
 
   public void fromBlobInfo(AlbumModel album, BlobInfo bi) {
@@ -185,21 +210,18 @@ public class PhotoModel extends BaseModel {
 
   public void populateVisionData() {
     VisionClient visionClient = new VisionClient();
-    this._populateVisionLabelData(visionClient);
-  }
 
-  public void _populateVisionLabelData(VisionClient visionClient) {
-    JsonArray visionLabelData = visionClient.detectLabelsGcs("gs:/" + this  .getGcsPath());
-    List<VisionLabel> visionLabels = new ArrayList<VisionLabel>();
-    for(JsonElement elem : visionLabelData) {
-      JsonObject obj = elem.getAsJsonObject();
-      VisionLabel label = new VisionLabel();
-      label.setMid(obj.get("mid").getAsString());
-      label.setDescription(obj.get("description").getAsString());
-      label.setScore(obj.get("score").getAsFloat());
-      visionLabels.add(label);
-    }
+    List<VisionModel> visionLabels = visionClient.detectLabels("gs:/" + this.getGcsPath());
     this.setVisionLabels(visionLabels);
+
+    List<VisionModel> visionLandmarks = visionClient.detectLandmarks("gs:/" + this.getGcsPath());
+    this.setVisionLandmarks(visionLandmarks);
+
+    List<VisionModel> visionLogos = visionClient.detectLogos("gs:/" + this.getGcsPath());
+    this.setVisionLogos(visionLogos);
+
+    List<VisionModel> visionTexts = visionClient.detectText("gs:/" + this.getGcsPath());
+    this.setVisionTexts(visionTexts);
   }
 
   public static PhotoModel getById(String sId) {

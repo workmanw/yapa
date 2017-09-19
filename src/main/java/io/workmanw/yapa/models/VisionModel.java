@@ -8,10 +8,23 @@ import com.jmethods.catatumbo.Embeddable;
 import com.google.gson.JsonObject;
 
 @Embeddable
-public class VisionLabel {
+public class VisionModel {
+  public static final String TYPE_LABEL = "Label";
+  public static final String TYPE_LANDMARK = "Landmark";
+  public static final String TYPE_LOGO = "Logo";
+  public static final String TYPE_TEXT = "Text";
+
+  private String type;
   private String mid;
   private String description;
   private float score;
+
+  public String getType() {
+    return this.type;
+  }
+  public void setType(String type) {
+    this.type = type;
+  }
 
   public String getMid() {
     return this.mid;

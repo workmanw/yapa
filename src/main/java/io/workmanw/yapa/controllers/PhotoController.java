@@ -66,11 +66,8 @@ public class PhotoController extends BaseController<PhotoModel> {
     AlbumModel album = AlbumModel.getById(parameters.get("album"));
     PhotoModel photo = this.createModelInstance();
     photo.fromBlobInfo(album, bi);
-    // photo.populateVisionData();
     photo = (PhotoModel) photo.createModel();
-
-    Queue queue = QueueFactory.getDefaultQueue();
-    queue.add(TaskOptions.Builder.withUrl("/_tasks/created_photo").param("photo", Long.toString(photo.getId())));
+    TasksController.scheduleCreatePhoto(photo);
 
     return this.serialize(photo);
   }
