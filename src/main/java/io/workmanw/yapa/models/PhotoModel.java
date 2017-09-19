@@ -76,6 +76,9 @@ public class PhotoModel extends BaseModel {
   public void setAlbum(DatastoreKey album) {
     this.album = album;
   }
+  public String getAlbumId() {
+    return Long.toString(this.getAlbum().id(), 10);
+  }
 
   public String getPhotoName() {
     return this.photoName;
@@ -259,6 +262,9 @@ public class PhotoModel extends BaseModel {
       photo.saveModel();
 
       sc.createPhotoDocument(photo);
+
+      AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
+      albumModel.addPreviewImageUrl(photo.getServingUrl());
     } else if (action.equals("UPDATE")) {
       PhotoModel photo = PhotoModel.getById(id);
       sc.updatePhotoDocument(photo);
