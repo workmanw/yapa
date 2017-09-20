@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+const htmlSafe = Ember.String.htmlSafe;
+
 let HpisImageComponent = Ember.Component.extend({
   tagName: 'img',
   attributeBindings: ['_src:src', 'style'],
@@ -31,9 +33,9 @@ let HpisImageComponent = Ember.Component.extend({
     let size = this.get('size'),
         height = this.get('height');
     if (height) {
-      return `max-height: ${height}px;`;
+      return htmlSafe(`max-height: ${height}px;`);
     }
-    return `max-width: ${size}px; max-height: ${size}px;`;
+    return htmlSafe(`max-width: ${size}px; max-height: ${size}px;`);
   }),
 
   click(evt) {

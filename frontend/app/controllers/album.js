@@ -52,6 +52,16 @@ export default Ember.Controller.extend({
       this.set('selectedPhoto', photo);
     },
 
+    refreshSelectedPhoto() {
+      let selectedPhoto = this.get('selectedPhoto');
+      if (selectedPhoto) {
+        this.set('isRefreshingPhoto', true);
+        selectedPhoto.reload().finally(() => {
+          this.set('isRefreshingPhoto', false);
+        });
+      }
+    },
+
     droppedFiles(fileUploads) {
       let album = this.get('album');
       fileUploads.forEach(fileUpload => {

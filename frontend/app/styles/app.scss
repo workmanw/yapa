@@ -107,3 +107,14 @@ input {
     opacity: 1;
   }
 }
+
+// ..........................................................
+// Spinning element - used for in progress activity
+//
+.spinning {
+  display: inline-block;
+  animation: spin 4s linear infinite;
+  opacity: .5;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }

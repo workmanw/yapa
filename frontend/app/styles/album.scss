@@ -27,13 +27,20 @@
     > * {
       display: inline-block;
     }
-    i {
+    .close-button {
       font-size: 18px;
+      cursor: pointer;
+    }
+    .refresh-button {
+      font-size: 18px;
+      cursor: pointer;
+      float: right;
+      margin: 15px 5px 0 0;
     }
   }
 
   .detail-contents {
-    overflox-x: hidden;
+    overflow-x: hidden;
     overflow-y: auto;
     position: absolute;
     top: 62px;
@@ -41,6 +48,11 @@
     padding-bottom: 20px;
   }
 
+  .details-image {
+    padding: 0 14px;
+    display: flex;
+    justify-content: center;
+  }
   .detail-list {
     font-size: 12px;
     padding: 14px;

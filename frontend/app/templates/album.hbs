@@ -12,10 +12,17 @@
 
   <div class="image-details {{if selectedPhoto 'visible'}}">
     <div class="details-header">
-      <div class="cursor-pointer" {{action "selectPhoto" null}}>{{fa-icon "times"}}</div>
+      <div class="close-button" {{action "selectPhoto" null}}>{{fa-icon "times"}}</div>
       <h3>Photo Details</h3>
+      <div class="refresh-button" {{action "refreshSelectedPhoto"}}>
+        {{fa-icon "refresh" classNameBindings="isRefreshingPhoto:spinning"}}
+      </div>
     </div>
     <div class="detail-contents">
+      <div class="details-image">
+        {{hpis-image height=240 url=selectedPhoto.servingUrl}}
+      </div>
+
       <div class="detail-list">
         <div class="detail-row">
           <span class="label">Photo Name:</span>
