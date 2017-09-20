@@ -9,6 +9,4 @@ rm -Rf src/main/webapp/ember-dist
 cp -R frontend/dist src/main/webapp/ember-dist
 
 # Everything
-mvn appengine:deployIndex
-mvn appengine:deployQueue
 mvn appengine:deploy
