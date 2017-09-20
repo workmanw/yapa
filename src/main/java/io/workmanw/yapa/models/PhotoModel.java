@@ -1,7 +1,6 @@
 package io.workmanw.yapa.models;
 
 import io.workmanw.yapa.utils.VisionClient;
-import io.workmanw.yapa.utils.SearchClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -252,20 +251,6 @@ public class PhotoModel extends BaseModel {
     this.setVisionTexts(visionTexts);
   }
 
-  public String getSearchText() {
-    StringBuilder strBuilder = new StringBuilder();
-    strBuilder.append(this.getPhotoName());
-    List<VisionModel> visionModels = new ArrayList<VisionModel>();
-    visionModels.addAll(this.getVisionLabels());
-    visionModels.addAll(this.getVisionLandmarks());
-    visionModels.addAll(this.getVisionLogos());
-    visionModels.addAll(this.getVisionTexts());
-    for (VisionModel visionModel : visionModels) {
-      strBuilder.append(visionModel.getDescription() + " ");
-    }
-    return strBuilder.toString();
-  }
-
   public static PhotoModel getById(String sId) {
     return BaseModel.getById(PhotoModel.class, sId);
   }
@@ -274,22 +259,10 @@ public class PhotoModel extends BaseModel {
   }
 
   public static void postProcess(String action, String id) {
-    SearchClient sc = new SearchClient();
-
     if (action.equals("CREATE")) {
       PhotoModel photo = PhotoModel.getById(id);
       photo.populateVisionData();
       photo.saveModel();
-
-      sc.createPhotoDocument(photo);
-
-      AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
-      albumModel.addPreviewImageUrl(photo.getServingUrl());
-    } else if (action.equals("UPDATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      sc.updatePhotoDocument(photo);
-    } else if (action.equals("DELETE")) {
-      sc.deletePhotoDocument(id);
     }
   }
 }
