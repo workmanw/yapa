@@ -4,6 +4,7 @@
 @import "components/file-uploader";
 @import "components/modal-wrapper";
 @import "components/photo-details-vision";
+@import "components/search-field";
 @import "album";
 @import "albums";
 
@@ -20,6 +21,19 @@ body > [class="ember-view"] { height: 100%; }
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.header-row {
+  height: 30px;
+  margin-bottom: 10px;
+
+  .back-icon { display: inline-block; font-size: 18px; color: #172A33; margin-right: 6px; }
+  h2 { margin: 0px; display: inline-block; }
+  .edit-icon { display: inline-block; font-size: 18px; margin-left: 20px; }
+
+  .search-field {
+    float: right;
+  }
 }
 
 button {
