@@ -37,9 +37,11 @@ let HpisImageComponent = Ember.Component.extend({
   }),
 
   click(evt) {
-    Ember.tryInvoke(this.attrs, 'on-click');
-    evt.stopPropagation();
-    return false;
+    if (this.attrs['on-click']) {
+      Ember.tryInvoke(this.attrs, 'on-click');
+      evt.stopPropagation();
+      return false;
+    }
   }
 });
 

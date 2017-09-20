@@ -13,6 +13,7 @@ body, html {
   line-height: 22px;
   margin: 10px;
   height: calc(100%-20px);
+  color: #172A33;
 }
 
 body > [class="ember-view"] { height: 100%; }
@@ -51,6 +52,23 @@ button {
     opacity: .65;
     background-color: #0275d8;
     border-color: #0275d8;
+  }
+
+  &.delete-button{
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d9534f;
+
+    &:hover {
+      color: #fff;
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
+
+    &.disabled, &:disabled {
+      background-color: #d9534f;
+      border-color: #d9534f;
+    }
   }
 }
 

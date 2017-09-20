@@ -18,14 +18,38 @@ export default Ember.Controller.extend({
   },
 
   actions: {
-    selectPhoto(photo) {
-      this.set('selectedPhoto', photo);
+    editAlbum() {
+      this.set('showEditAlbumModal', true);
+    },
+
+    hideEditAlbum() {
+      this.get('album').rollbackAttributes();
+      this.set('showEditAlbumModal', false);
+    },
+
+    saveAlbum() {
+      this.set('isSavingAlbum', true);
+      this.get('album').save().then(() => {
+        this.set('showEditAlbumModal', false);
+      }).finally(() => {
+        this.set('isSavingAlbum', false);
+      });
     },
 
     deleteAlbum() {
-      let album = this.get('album');
-      album.destroyRecord();
-      this.transitionToRoute('albums');
+      let confirmed = window.confirm('Are you sure?');
+      if (confirmed) {
+        this.set('isSavingAlbum', true);
+        this.get('album').destroyRecord().then(() => {
+          this.transitionToRoute('albums');
+        }).finally(() => {
+          this.set('isSavingAlbum', false);
+        });
+      }
+    },
+
+    selectPhoto(photo) {
+      this.set('selectedPhoto', photo);
     },
 
     droppedFiles(fileUploads) {

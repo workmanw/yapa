@@ -1,8 +1,9 @@
 .header-row {
   margin-bottom: 10px;
 
+  .back-icon { display: inline-block; font-size: 18px; color: #172A33; margin-right: 6px; }
   h2 { margin: 0px; display: inline-block; }
-  .edit-icon { display: inline-block; }
+  .edit-icon { display: inline-block; font-size: 18px; margin-left: 20px; }
 }
 
 .image-details {
@@ -62,6 +63,25 @@
       .value {
         word-wrap: break-word;
       }
+    }
+  }
+}
+
+.edit-album-modal {
+  .modal-content {
+    width: 300px;
+
+    h3 {
+      margin: 0px 0px 10px 0px;
+    }
+    .input-row {
+      margin-bottom: 14px;
+      input { width: 280px; }
+    }
+    .button-row {
+      height: 32px;
+      .delete-button { float: left; }
+      button { float: right; }
     }
   }
 }
