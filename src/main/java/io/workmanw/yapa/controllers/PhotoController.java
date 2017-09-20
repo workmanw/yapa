@@ -1,5 +1,6 @@
 package io.workmanw.yapa.controllers;
 
+import static io.workmanw.yapa.Constants.GCS_BUCKET;
 import io.workmanw.yapa.models.AlbumModel;
 import io.workmanw.yapa.models.PhotoModel;
 import io.workmanw.yapa.utils.SearchClient;
@@ -56,7 +57,7 @@ public class PhotoController extends BaseController<PhotoModel> {
 
   @RequestMapping(value="/upload_url", method=RequestMethod.GET)
   public String getUploadUrl() {
-    UploadOptions uploadOpts = UploadOptions.Builder.withGoogleStorageBucketName("yapa-assets-0");
+    UploadOptions uploadOpts = UploadOptions.Builder.withGoogleStorageBucketName(GCS_BUCKET);
     String uploadUrl = blobstoreService.createUploadUrl("/_uploads/photo", uploadOpts);
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("uploadUrl", uploadUrl);
