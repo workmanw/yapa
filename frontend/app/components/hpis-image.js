@@ -5,6 +5,7 @@ const htmlSafe = Ember.String.htmlSafe;
 let HpisImageComponent = Ember.Component.extend({
   tagName: 'img',
   attributeBindings: ['_src:src', 'style'],
+  classNames: 'hpis-image',
 
   url: null,
   square: false,

@@ -7,6 +7,9 @@ export default Ember.Controller.extend({
   photos: null,
   sortedPhotos: sortBy('photo', 'createdOn'),
 
+  uploadingCount: 0,
+  isUploading: Ember.computed.gt('uploadingCount', 0),
+
   loadPhotos() {
     let albumId = this.get('album.id');
 
@@ -69,9 +72,12 @@ export default Ember.Controller.extend({
     droppedFiles(fileUploads) {
       let album = this.get('album');
       fileUploads.forEach(fileUpload => {
+        this.incrementProperty('uploadingCount');
         album.uploadPhoto(fileUpload).then(newPhoto => {
           let photos = this.get('photos');
           photos.insertAt(0, newPhoto);
+        }).finally(() => {
+          this.decrementProperty('uploadingCount');
         });
       });
     }

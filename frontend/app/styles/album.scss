@@ -1,10 +1,25 @@
-.header-row {
-  margin-bottom: 10px;
+.album-photos {
+  display: flex;
+  flex-wrap: wrap;
 
-  .back-icon { display: inline-block; font-size: 18px; color: #172A33; margin-right: 6px; }
-  h2 { margin: 0px; display: inline-block; }
-  .edit-icon { display: inline-block; font-size: 18px; margin-left: 20px; }
+  .uploading-photo {
+    background: #E6EEF2;
+    height: 120px;
+    width: 220px;
+    display: inline-block;
+    .inner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
+
+  .uploading-photo, .hpis-image {
+    margin: 0 10px 10px 0;
+  }
 }
+
 
 .image-details {
   position: fixed;
