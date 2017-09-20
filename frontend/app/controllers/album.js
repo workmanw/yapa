@@ -1,15 +1,19 @@
 import Ember from 'ember';
+import sortBy from 'ember-computed-sortby';
 
 export default Ember.Controller.extend({
   store: Ember.inject.service(),
+
+  photos: null,
+  sortedPhotos: sortBy('photo', 'createdOn'),
 
   loadPhotos() {
     let albumId = this.get('album.id');
 
     this.set('selectedPhoto', null);
     this.set('photos', null);
-    this.set('isLoadingPhotos', true);
 
+    this.set('isLoadingPhotos', true);
     this.get('store').query('photo', { album: albumId }).then(photos => {
       this.set('photos', photos.toArray());
     }).finally(() => {

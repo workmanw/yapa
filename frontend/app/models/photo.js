@@ -3,6 +3,7 @@ import DS from 'ember-data';
 export default DS.Model.extend({
   photoName: DS.attr('string'),
   album: DS.belongsTo('album'),
+  createdOn: DS.attr('string'),
 
   blobKey: DS.attr('string'),
   content: DS.attr('string'),

@@ -2125,7 +2125,7 @@ ember-cli-babel@5.1.10:
     ember-cli-version-checker "^1.0.2"
     resolve "^1.1.2"
 
-ember-cli-babel@^5.1.6, ember-cli-babel@^5.1.7:
+ember-cli-babel@^5.1.7:
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/ember-cli-babel/-/ember-cli-babel-5.2.4.tgz#5ce4f46b08ed6f6d21e878619fb689719d6e8e13"
   dependencies:
@@ -2443,11 +2443,11 @@ ember-cli@~2.14.2:
     walk-sync "^0.3.0"
     yam "0.0.22"
 
-ember-data-query-path@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ember-data-query-path/-/ember-data-query-path-1.0.0.tgz#25789195375e9def846bd9dbaaf6410fe0c55ec6"
+ember-computed-sortby@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/ember-computed-sortby/-/ember-computed-sortby-0.1.0.tgz#a356ec3d22500373570b32b70856491dcc805128"
   dependencies:
-    ember-cli-babel "^5.1.6"
+    ember-cli-babel "^6.0.0"
 
 ember-data@~2.14.9:
   version "2.14.11"

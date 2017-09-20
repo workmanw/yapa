@@ -15,6 +15,7 @@ import com.jmethods.catatumbo.Identifier;
 import com.jmethods.catatumbo.Exploded;
 import com.jmethods.catatumbo.Embedded;
 import com.jmethods.catatumbo.Key;
+import com.jmethods.catatumbo.CreatedTimestamp;
 
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
@@ -22,8 +23,12 @@ import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 
 import java.lang.StringBuilder;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -40,6 +45,8 @@ public class PhotoModel extends BaseModel {
   protected long id;
   @Key
   protected DatastoreKey key;
+  @CreatedTimestamp
+  private Date createdOn;
 
 	private DatastoreKey album;
   private String photoName;
@@ -78,6 +85,13 @@ public class PhotoModel extends BaseModel {
   }
   public String getAlbumId() {
     return Long.toString(this.getAlbum().id(), 10);
+  }
+
+  public Date getCreatedOn() {
+    return this.createdOn;
+  }
+  public void setCreatedOn(Date createdOn) {
+    this.createdOn = createdOn;
   }
 
   public String getPhotoName() {
@@ -176,6 +190,12 @@ public class PhotoModel extends BaseModel {
     jsonObj.addProperty("md5", this.getMd5());
     jsonObj.addProperty("filesize", this.getFilesize());
     jsonObj.addProperty("servingUrl", this.getServingUrl());
+
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+    df.setTimeZone(tz);
+    String createdOn = df.format(this.getCreatedOn());
+    jsonObj.addProperty("createdOn", createdOn);
 
     JsonObject visionJsonObj = new JsonObject();
     visionJsonObj.add("labels", this.visionListToJson(this.getVisionLabels()));

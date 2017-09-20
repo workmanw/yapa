@@ -5,7 +5,7 @@
 
 <div class="album-list">
   {{album-create-item on-click=(action "showCreateAlbum")}}
-  {{#each albums as |album|}}
+  {{#each sortedAlbums as |album|}}
     {{#link-to "album" album.id}}
       {{album-list-item album=album}}
     {{/link-to}}

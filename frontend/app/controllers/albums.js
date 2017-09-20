@@ -1,9 +1,12 @@
 import Ember from 'ember';
+import sortBy from 'ember-computed-sortby';
 
 export default Ember.Controller.extend({
   store: Ember.inject.service(),
 
   isCreatingAlbum: false,
+
+  sortedAlbums: sortBy('albums', 'name'),
 
   actions: {
     showCreateAlbum() {

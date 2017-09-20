@@ -46,7 +46,7 @@ public class PhotoController extends BaseController<PhotoModel> {
     EntityManager em = this.getEntityManager();
     AlbumModel album = AlbumModel.getById(albumId);
 
-    EntityQueryRequest request = em.createEntityQueryRequest("SELECT * FROM Photo WHERE album=@1");
+    EntityQueryRequest request = em.createEntityQueryRequest("SELECT * FROM Photo WHERE album=@1 ORDER BY createdOn DESC");
     request.addPositionalBinding(album.getKey());
     QueryResponse<PhotoModel> response = em.executeEntityQueryRequest(this.modelClass, request);
     List<PhotoModel> entities = response.getResults();
