@@ -3,6 +3,7 @@
 @import "components/album-list-item";
 @import "components/file-uploader";
 @import "components/modal-wrapper";
+@import "components/photo-details-vision";
 @import "album";
 @import "albums";
 
@@ -16,6 +17,9 @@ body, html {
 
 body > [class="ember-view"] { height: 100%; }
 
+.cursor-pointer {
+  cursor: pointer;
+}
 
 button {
   display: inline-block;

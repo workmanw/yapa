@@ -5,6 +5,62 @@
   </div>
 
   {{#each photos as |photo|}}
-    {{hpis-image height=120 url=photo.servingUrl}}
+    {{hpis-image class="cursor-pointer" height=120 url=photo.servingUrl on-click=(action "selectPhoto" photo)}}
   {{/each}}
+
+  <div class="image-details {{if selectedPhoto 'visible'}}">
+    <div class="details-header">
+      <div class="cursor-pointer" {{action "selectPhoto" null}}>{{fa-icon "times"}}</div>
+      <h3>Photo Details</h3>
+    </div>
+    <div class="detail-contents">
+      <div class="detail-list">
+        <div class="detail-row">
+          <span class="label">Photo Name:</span>
+          <span class="value">{{selectedPhoto.photoName}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Album Id:</span>
+          <span class="value">{{selectedPhoto.album.id}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Album Name:</span>
+          <span class="value">{{selectedPhoto.album.name}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">BlobKey:</span>
+          <span class="value">{{selectedPhoto.blobKey}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Content Type:</span>
+          <span class="value">{{selectedPhoto.content}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Filename:</span>
+          <span class="value">{{selectedPhoto.filename}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">File size:</span>
+          <span class="value">{{selectedPhoto.filesize}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">GCS Path:</span>
+          <span class="value">{{selectedPhoto.gcsPath}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">MD5:</span>
+          <span class="value">{{selectedPhoto.md5}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Serving URL:</span>
+          <span class="value">{{selectedPhoto.servingUrl}}</span>
+        </div>
+      </div>
+
+      {{photo-details-vision label="Labels" visionDetails=selectedPhoto.vision.labels}}
+      {{photo-details-vision label="Landmarks" visionDetails=selectedPhoto.vision.landmarks}}
+      {{photo-details-vision label="Logos" visionDetails=selectedPhoto.vision.logos}}
+      {{photo-details-vision label="Text" visionDetails=selectedPhoto.vision.texts}}
+    </div>
+  </div>
 {{/file-uploader}}

@@ -1,6 +1,67 @@
 .header-row {
   margin-bottom: 10px;
-  
+
   h2 { margin: 0px; display: inline-block; }
   .edit-icon { display: inline-block; }
+}
+
+.image-details {
+  position: fixed;
+  right: -401px;
+  width: 400px;
+  top: 0px;
+  bottom: 0px;
+  background-color: #fafafa;
+  border-left: solid 1px #D3D3D3;
+  transition: right 0.25s ease-in-out;
+
+  &.visible {
+    right: 0px;
+  }
+
+  .details-header {
+    padding: 0px 14px;
+    width: calc(100%-10px);
+    border-bottom: solid 1px #D3D3D3;
+    > * {
+      display: inline-block;
+    }
+    i {
+      font-size: 18px;
+    }
+  }
+
+  .detail-contents {
+    overflox-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    top: 62px;
+    bottom: 0px;
+    padding-bottom: 20px;
+  }
+
+  .detail-list {
+    font-size: 12px;
+    padding: 14px;
+
+    display: table;
+    table-layout: fixed;
+    width:100%;
+    .detail-row {
+      display: table-row;
+      > * {
+        display: table-cell;
+      }
+
+      .label {
+        font-weight: 700;
+        white-space: nowrap;
+        padding-right: 10px;
+        width: 100px;
+      }
+      .value {
+        word-wrap: break-word;
+      }
+    }
+  }
 }

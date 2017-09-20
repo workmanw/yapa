@@ -1,0 +1,14 @@
+.photo-details-vision {
+  margin: 14px;
+  h4 { margin: 0; }
+  .no-vision-data { color: #69818C; font-style: italic; }
+
+  table {
+    margin: 0px 18px;
+    width: 100%;
+    text-align: left;
+    th {
+      min-width: 80px;
+    }
+  }
+}

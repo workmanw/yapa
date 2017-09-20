@@ -6,6 +6,7 @@ export default Ember.Controller.extend({
   loadPhotos() {
     let albumId = this.get('album.id');
 
+    this.set('selectedPhoto', null);
     this.set('photos', null);
     this.set('isLoadingPhotos', true);
 
@@ -17,6 +18,10 @@ export default Ember.Controller.extend({
   },
 
   actions: {
+    selectPhoto(photo) {
+      this.set('selectedPhoto', photo);
+    },
+
     deleteAlbum() {
       let album = this.get('album');
       album.destroyRecord();

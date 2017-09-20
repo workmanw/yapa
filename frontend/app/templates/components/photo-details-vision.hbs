@@ -1,0 +1,20 @@
+<h4>Vision {{label}}</h4>
+
+{{#if visionDetails}}
+  <table>
+    <tr>
+      <th>Description</th>
+      <th>MID</th>
+      <th>Score</th>
+    </tr>
+    {{#each visionDetails as |visionLabel|}}
+      <tr>
+        <td>{{visionLabel.description}}</td>
+        <td>{{visionLabel.mid}}</td>
+        <td>{{visionLabel.score}}</td>
+      </tr>
+    {{/each}}
+  </table>
+{{else}}
+  <span class="no-vision-data">No vision data</span>
+{{/if}}

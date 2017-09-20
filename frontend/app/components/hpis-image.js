@@ -34,7 +34,13 @@ let HpisImageComponent = Ember.Component.extend({
       return `max-height: ${height}px;`;
     }
     return `max-width: ${size}px; max-height: ${size}px;`;
-  })
+  }),
+
+  click(evt) {
+    Ember.tryInvoke(this.attrs, 'on-click');
+    evt.stopPropagation();
+    return false;
+  }
 });
 
 export default HpisImageComponent;
