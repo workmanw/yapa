@@ -5,3 +5,13 @@
 </div>
 
 Search Text: {{text}}
+
+<div class="search-list">
+  {{#each searchPhotos as |photo|}}
+    {{search-list-item photo=photo}}
+  {{else}}
+    <div class="no-search-results">
+      No search results found
+    </div>
+  {{/each}}
+</div>

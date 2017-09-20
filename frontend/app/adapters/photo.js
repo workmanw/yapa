@@ -2,6 +2,14 @@ import ApplicationAdapter from './application';
 import Ember from 'ember';
 
 export default ApplicationAdapter.extend({
+  buildURL(modelName, id, snapshot, requestType, query) {
+    let url = this._super(...arguments);
+    if (query && query.search) {
+      url += '/search';
+    }
+    return url;
+  },
+
   uploadPhoto(store, album, file) {
     let albumId = album.get('id');
     return this.ajax('/api/v1/photo/upload_url', 'GET').then(({ uploadUrl }) => {
