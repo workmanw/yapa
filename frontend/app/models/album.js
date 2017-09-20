@@ -4,8 +4,8 @@ export default DS.Model.extend({
   name: DS.attr('string'),
   previewImageUrls: DS.attr(),
 
-  uploadPhotos(files) {
+  uploadPhoto(file) {
     let photoAdapter = this.store.adapterFor('photo');
-    return photoAdapter.uploadPhotos(this.store, this, files);
+    return photoAdapter.uploadPhoto(this.store, this, file);
   }
 });

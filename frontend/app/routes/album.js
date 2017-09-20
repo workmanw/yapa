@@ -5,13 +5,7 @@ export default Ember.Route.extend({
 
   setupController(controller, model) {
     controller.set('album', model);
-
-    controller.set('isLoadingPhotos', true);
-    this.get('store').query('photo', { album: model.get('id') }).then(photos => {
-      controller.set('photos', photos);
-    }).finally(() => {
-      controller.set('isLoadingPhotos', false);
-    });
+    controller.loadPhotos();
   },
 
   model(params) {

@@ -2,15 +2,16 @@ import ApplicationAdapter from './application';
 import Ember from 'ember';
 
 export default ApplicationAdapter.extend({
-  uploadPhotos(store, album, files) {
-    let filePromises = files.map(file => {
-      return this.ajax('/api/v1/photo/upload_url', 'GET').then(({ uploadUrl }) => {
-        uploadUrl = uploadUrl.match(/\/_ah\/upload.*/)[0];
-        return this.sendFileBytes(uploadUrl, { album: album.get('id'), blarg: 'foor bar' }, file);
+  uploadPhoto(store, album, file) {
+    let albumId = album.get('id');
+    return this.ajax('/api/v1/photo/upload_url', 'GET').then(({ uploadUrl }) => {
+      uploadUrl = uploadUrl.match(/\/_ah\/upload.*/)[0];
+      return this.sendFileBytes(uploadUrl, { album: albumId }, file).then(resp => {
+        let photoId = resp['photo'][0]['id'];
+        store.pushPayload(resp);
+        return store.peekRecord('photo', photoId);
       });
     });
-
-    return Ember.RSVP.allSettled(filePromises);
   },
 
   sendFileBytes(url, recordData, fileUpload) {
@@ -61,9 +62,12 @@ export default ApplicationAdapter.extend({
           // Stash this away incase we need to cancel it.
           fileUpload.set('uploadJqXHR', jqXHR);
         }
-      }).done((data, textStatus, jqXHR) => {
+      }).done((data /*, textStatus, jqXHR*/) => {
+        if (typeof data === 'string') {
+          data = JSON.parse(data);
+        }
         resolve(data);
-      }).fail((jqXHR, textStatus, errorThrown) => {
+      }).fail((jqXHR /*, textStatus, errorThrown*/) => {
         reject(jqXHR);
       });
     });

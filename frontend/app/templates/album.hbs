@@ -1,4 +1,10 @@
 {{#file-uploader dropped-files=(action "droppedFiles")}}
-  <h2>{{album.name}}</h2>
-  <button {{action "deleteAlbum"}}>Delete</button>
+  <div class="header-row">
+    <h2>{{album.name}}</h2>
+    <div class="edit-icon" {{action "editAlbum"}}>{{fa-icon "cog" size=1}}</div>
+  </div>
+
+  {{#each photos as |photo|}}
+    {{hpis-image height=120 url=photo.servingUrl}}
+  {{/each}}
 {{/file-uploader}}
