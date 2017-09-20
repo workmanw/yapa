@@ -10,3 +10,56 @@ body, html {
   line-height: 22px;
   margin: 10px;
 }
+
+button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .5rem 1rem;
+  font-size: 1rem;
+  border-radius: .25rem;
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+
+  color: #fff;
+  background-color: #0275d8;
+  border-color: #0275d8;
+
+  &:hover {
+    color: #fff;
+    background-color: #025aa5;
+    border-color: #01549b;
+  }
+
+  &.disabled, &:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+    background-color: #0275d8;
+    border-color: #0275d8;
+  }
+}
+
+input {
+  display: block;
+  width: 250px;
+  padding: .5rem .75rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: #464a4c;
+  background-color: #fff;
+  background-image: none;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: .25rem;
+
+  &.disabled, &:disabled {
+    cursor: not-allowed;
+    background-color: #eceeef;
+    opacity: 1;
+  }
+}

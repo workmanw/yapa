@@ -9,6 +9,12 @@
   {{/each}}
 </div>
 
-{{#modal-wrapper visible=isCreatingAlbum on-close=(action "hideCreateAlbum")}}
-  {{input value=newAlbumName}} <button {{action "createAlbum"}}>Create</button>
+{{#modal-wrapper classNames="new-album-modal" visible=showCreateAlbumModal on-close=(action "hideCreateAlbum")}}
+  <h3>New Album</h3>
+  <div class="input-row">
+    {{input value=newAlbumName placeholder="Album Name" disabled=isCreatingAlbum}}
+  </div>
+  <div class="button-row">
+    <button disabled={{isCreatingAlbum}} {{action "createAlbum"}}>Create</button>
+  </div>
 {{/modal-wrapper}}

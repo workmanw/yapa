@@ -6,3 +6,21 @@
     margin-right: 20px;
   }
 }
+
+.new-album-modal {
+  .modal-content {
+    width: 300px;
+
+    h3 {
+      margin: 0px 0px 10px 0px;
+    }
+    .input-row {
+      margin-bottom: 14px;
+      input { width: 280px; }
+    }
+    .button-row {
+      height: 32px;
+      button { float: right; }
+    }
+  }
+}
