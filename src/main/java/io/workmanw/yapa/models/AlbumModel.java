@@ -70,11 +70,13 @@ public class AlbumModel extends BaseModel {
 
     JsonArray jsonUrls = new JsonArray();
     List<String> urls = this.getPreviewImageUrls();
-    for (String url : urls) {
-      jsonUrls.add(url);
+    if (urls != null) {
+      for (String url : urls) {
+        jsonUrls.add(url);
+      }
     }
     jsonObj.add("previewImageUrls", jsonUrls);
-    
+
     return jsonObj;
   }
 
