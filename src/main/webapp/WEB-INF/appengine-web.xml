@@ -7,4 +7,8 @@
     <max-concurrent-requests>4</max-concurrent-requests>
   </automatic-scaling>
   <public-root>/ember-dist</public-root>
+  <static-files>
+    <include path="/ember-dist/**" expiration="1m" />
+    <include path="/**" expiration="1m" />
+  </static-files>
 </appengine-web-app>
