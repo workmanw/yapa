@@ -1,11 +1,14 @@
-<h2>Album</h2>
+<h2>Albums</h2>
 
-{{input value=newAlbumName}} <button {{action "createAlbum"}}>Create</button>
-
-<ul>
+<div class="album-list">
+  {{album-create-item on-click=(action "showCreateAlbum")}}
   {{#each albums as |album|}}
-    <li>
-      {{#link-to "album" album.id}}{{album.name}}{{/link-to}}
-    </li>
+    {{#link-to "album" album.id}}
+      {{album-list-item album=album}}
+    {{/link-to}}
   {{/each}}
-</ul>
+</div>
+
+{{#modal-wrapper visible=isCreatingAlbum on-close=(action "hideCreateAlbum")}}
+  {{input value=newAlbumName}} <button {{action "createAlbum"}}>Create</button>
+{{/modal-wrapper}}

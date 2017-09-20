@@ -1,0 +1,8 @@
+.album-list {
+  display: flex;
+  margin-top: 10px;
+
+  .album-create-item, .album-list-item {
+    margin-right: 20px;
+  }
+}
