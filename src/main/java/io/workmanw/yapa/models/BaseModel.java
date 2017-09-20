@@ -1,7 +1,5 @@
 package io.workmanw.yapa.models;
 
-import io.workmanw.yapa.utils.TaskClient;
-
 import com.jmethods.catatumbo.EntityManagerFactory;
 import com.jmethods.catatumbo.EntityManager;
 
@@ -16,30 +14,19 @@ public class BaseModel extends Object {
   public BaseModel createModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
-    BaseModel newModel = em.insert(this);
-    newModel.schedulePostProcess("CREATE");
-    return newModel;
+    return em.insert(this);
   }
 
   public void saveModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.update(this);
-    this.schedulePostProcess("UPDATE");
   }
 
   public void deleteModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.delete(this);
-    this.schedulePostProcess("DELETE");
-  }
-
-  public void schedulePostProcess(String action) {
-    String kind = this.getKind();
-    String sId = Long.toString(this.getId(), 10);
-    TaskClient taskClient = new TaskClient();
-    taskClient.scheduleModelPostProcess(action, kind, sId);
   }
 
   public JsonObject toJson() {
@@ -58,6 +45,4 @@ public class BaseModel extends Object {
     EntityManager em = emf.createDefaultEntityManager();
     return em.load(modelClass, id);
   }
-
-  public static void postProcess(String action, String id) { }
 }

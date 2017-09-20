@@ -23,8 +23,6 @@ public class AlbumModel extends BaseModel {
 
   private String name;
 
-  private List<String> previewImageUrls;
-
   public long getId() {
     return this.id;
   }
@@ -46,43 +44,16 @@ public class AlbumModel extends BaseModel {
     this.name = name;
   }
 
-  public List<String> getPreviewImageUrls() {
-    return this.previewImageUrls;
-  }
-  public void setPreviewImageUrls(List<String> previewImageUrls) {
-    this.previewImageUrls = previewImageUrls;
-  }
-
-  public void addPreviewImageUrl(String url) {
-    List<String> urls = this.getPreviewImageUrls();
-    urls.add(0, url);
-    if (urls.size() > 4) {
-      urls = new ArrayList<String>(urls.subList(0, 4));
-    }
-    this.setPreviewImageUrls(urls);
-    this.saveModel();
-  }
-
   public JsonObject toJson() {
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("id", this.id);
     jsonObj.addProperty("name", this.name);
-
-    JsonArray jsonUrls = new JsonArray();
-    List<String> urls = this.getPreviewImageUrls();
-    if (urls != null) {
-      for (String url : urls) {
-        jsonUrls.add(url);
-      }
-    }
-    jsonObj.add("previewImageUrls", jsonUrls);
 
     return jsonObj;
   }
 
   public void fromJson(JsonObject jsonObj) {
     this.setName(jsonObj.get("name").getAsString());
-    this.setPreviewImageUrls(new ArrayList<String>());
   }
 
   public static AlbumModel getById(String sId) {

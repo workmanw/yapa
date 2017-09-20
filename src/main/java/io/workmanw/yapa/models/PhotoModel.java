@@ -1,8 +1,5 @@
 package io.workmanw.yapa.models;
 
-import io.workmanw.yapa.utils.VisionClient;
-import io.workmanw.yapa.utils.SearchClient;
-
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.images.ImagesService;
@@ -57,11 +54,6 @@ public class PhotoModel extends BaseModel {
   private String md5;
   private long filesize;
   private String servingUrl;
-
-  private List<VisionModel> visionLabels;
-  private List<VisionModel> visionLandmarks;
-  private List<VisionModel> visionLogos;
-  private List<VisionModel> visionTexts;
 
   public long getId() {
     return this.id;
@@ -150,34 +142,6 @@ public class PhotoModel extends BaseModel {
     this.servingUrl = servingUrl;
   }
 
-  public List<VisionModel> getVisionLabels() {
-    return this.visionLabels;
-  }
-  public void setVisionLabels(List<VisionModel> visionLabels) {
-    this.visionLabels = visionLabels;
-  }
-
-  public List<VisionModel> getVisionLandmarks() {
-    return this.visionLandmarks;
-  }
-  public void setVisionLandmarks(List<VisionModel> visionLandmarks) {
-    this.visionLandmarks = visionLandmarks;
-  }
-
-  public List<VisionModel> getVisionLogos() {
-    return this.visionLogos;
-  }
-  public void setVisionLogos(List<VisionModel> visionLogos) {
-    this.visionLogos = visionLogos;
-  }
-
-  public List<VisionModel> getVisionTexts() {
-    return this.visionTexts;
-  }
-  public void setVisionTexts(List<VisionModel> visionTexts) {
-    this.visionTexts = visionTexts;
-  }
-
   public JsonObject toJson() {
     JsonObject jsonObj = new JsonObject();
     jsonObj.addProperty("id", this.getId());
@@ -197,24 +161,7 @@ public class PhotoModel extends BaseModel {
     String createdOn = df.format(this.getCreatedOn());
     jsonObj.addProperty("createdOn", createdOn);
 
-    JsonObject visionJsonObj = new JsonObject();
-    visionJsonObj.add("labels", this.visionListToJson(this.getVisionLabels()));
-    visionJsonObj.add("landmarks", this.visionListToJson(this.getVisionLandmarks()));
-    visionJsonObj.add("logos", this.visionListToJson(this.getVisionLogos()));
-    visionJsonObj.add("texts", this.visionListToJson(this.getVisionTexts()));
-    jsonObj.add("vision", visionJsonObj);
-
     return jsonObj;
-  }
-
-  protected JsonArray visionListToJson(List<VisionModel> models) {
-    JsonArray visionLabelsJson = new JsonArray();
-    if (models != null) {
-      for (VisionModel visionLabel : models) {
-        visionLabelsJson.add(visionLabel.toJson());
-      }
-    }
-    return visionLabelsJson;
   }
 
   public void fromBlobInfo(AlbumModel album, BlobInfo bi) {
@@ -236,60 +183,10 @@ public class PhotoModel extends BaseModel {
     this.setServingUrl(servingUrl);
   }
 
-  public void populateVisionData() {
-    VisionClient visionClient = new VisionClient();
-
-    List<VisionModel> visionLabels = visionClient.detectLabels("gs:/" + this.getGcsPath());
-    this.setVisionLabels(visionLabels);
-
-    List<VisionModel> visionLandmarks = visionClient.detectLandmarks("gs:/" + this.getGcsPath());
-    this.setVisionLandmarks(visionLandmarks);
-
-    List<VisionModel> visionLogos = visionClient.detectLogos("gs:/" + this.getGcsPath());
-    this.setVisionLogos(visionLogos);
-
-    List<VisionModel> visionTexts = visionClient.detectText("gs:/" + this.getGcsPath());
-    this.setVisionTexts(visionTexts);
-  }
-
-  public String getSearchText() {
-    StringBuilder strBuilder = new StringBuilder();
-    strBuilder.append(this.getPhotoName());
-    List<VisionModel> visionModels = new ArrayList<VisionModel>();
-    visionModels.addAll(this.getVisionLabels());
-    visionModels.addAll(this.getVisionLandmarks());
-    visionModels.addAll(this.getVisionLogos());
-    visionModels.addAll(this.getVisionTexts());
-    for (VisionModel visionModel : visionModels) {
-      strBuilder.append(visionModel.getDescription() + " ");
-    }
-    return strBuilder.toString();
-  }
-
   public static PhotoModel getById(String sId) {
     return BaseModel.getById(PhotoModel.class, sId);
   }
   public static PhotoModel getById(long id) {
     return BaseModel.getById(PhotoModel.class, id);
-  }
-
-  public static void postProcess(String action, String id) {
-    SearchClient sc = new SearchClient();
-
-    if (action.equals("CREATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      photo.populateVisionData();
-      photo.saveModel();
-
-      sc.createPhotoDocument(photo);
-
-      AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
-      albumModel.addPreviewImageUrl(photo.getServingUrl());
-    } else if (action.equals("UPDATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      sc.updatePhotoDocument(photo);
-    } else if (action.equals("DELETE")) {
-      sc.deletePhotoDocument(id);
-    }
   }
 }
