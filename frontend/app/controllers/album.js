@@ -13,6 +13,7 @@ export default Ember.Controller.extend({
   loadPhotos() {
     let albumId = this.get('album.id');
 
+    this.set('showEditAlbumModal', false);
     this.set('selectedPhoto', null);
     this.set('photos', null);
 
