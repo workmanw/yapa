@@ -18,6 +18,15 @@
   .uploading-photo, .hpis-image {
     margin: 0 10px 10px 0;
   }
+
+  .loading-photos, .empty-photos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: calc(100vh - 60px);
+    .fa { margin: 0 10px; }
+  }
 }
 
 

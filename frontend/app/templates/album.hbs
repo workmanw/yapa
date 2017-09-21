@@ -7,16 +7,26 @@
   </div>
 
   <div class="album-photos">
-    {{#if isUploading}}
-      <div class="uploading-photo">
-        <div class="inner">
-          {{fa-icon "refresh" classNames="spinning" size=2}}
-        </div>
+    {{#if isLoadingPhotos}}
+      <div class="loading-photos">
+        <span class="animated-ellipsis">Loading Photos</span>
       </div>
+    {{else}}
+      {{#if isUploading}}
+        <div class="uploading-photo">
+          <div class="inner">
+            {{fa-icon "refresh" classNames="spinning" size=2}}
+          </div>
+        </div>
+      {{/if}}
+      {{#each photos as |photo|}}
+        {{hpis-image class="cursor-pointer" height=120 url=photo.servingUrl on-click=(action "selectPhoto" photo)}}
+      {{else}}
+        <div class="empty-photos">
+          Drop files to upload {{fa-icon "cloud-upload" size=2}}
+        </div>
+      {{/each}}
     {{/if}}
-    {{#each photos as |photo|}}
-      {{hpis-image class="cursor-pointer" height=120 url=photo.servingUrl on-click=(action "selectPhoto" photo)}}
-    {{/each}}
   </div>
 
   <div class="image-details {{if selectedPhoto 'visible'}}">

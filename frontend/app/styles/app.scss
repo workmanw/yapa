@@ -6,6 +6,7 @@
 @import "components/photo-details-vision";
 @import "components/search-field";
 @import "components/search-list-item";
+@import "animations";
 @import "album";
 @import "albums";
 @import "search";
@@ -117,14 +118,3 @@ input {
     opacity: 1;
   }
 }
-
-// ..........................................................
-// Spinning element - used for in progress activity
-//
-.spinning {
-  display: inline-block;
-  animation: spin 4s linear infinite;
-  opacity: .5;
-}
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
