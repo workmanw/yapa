@@ -38,6 +38,16 @@ body > [class="ember-view"] { height: 100%; }
   }
 }
 
+.github-link {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  a { text-decoration: none; display: flex; color: #172A33; }
+  a:hover { opacity: 0.7; }
+  .fa { margin-right: 5px; }
+
+}
+
 button {
   display: inline-block;
   font-weight: 400;
