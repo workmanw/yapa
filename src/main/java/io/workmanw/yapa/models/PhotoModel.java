@@ -3,6 +3,7 @@ package io.workmanw.yapa.models;
 import io.workmanw.yapa.utils.VisionClient;
 import io.workmanw.yapa.utils.VideoIntelClient;
 import io.workmanw.yapa.utils.SearchClient;
+import io.workmanw.yapa.utils.TranscriptionClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -245,6 +246,7 @@ public class PhotoModel extends BaseModel {
 
     jsonObj.add("vision", this.visionDataToJson());
     jsonObj.add("videoIntel", this.videoIntelDataToJson());
+    jsonObj.addProperty("speechTranscript", this.getSpeechTranscipt());
 
     return jsonObj;
   }
@@ -313,6 +315,7 @@ public class PhotoModel extends BaseModel {
       this.saveModel();
     } else if (this.isAudio()) {
       this.transcribeAudioFile();
+      this.saveModel();
     } else if (this.isVideo()) {
       this.populateVideoIntelligence();
       this.saveModel();
@@ -329,16 +332,26 @@ public class PhotoModel extends BaseModel {
     this.setVisionTexts(resp.visionTexts);
   }
 
-  public void transcribeAudioFile() {
+  private String speechTranscipt;
+  public String getSpeechTranscipt() {
+    return this.speechTranscipt;
+  }
+  public void setSpeechTranscipt(String speechTranscipt) {
+    this.speechTranscipt = speechTranscipt;
+  }
 
+  public void transcribeAudioFile() {
+    TranscriptionClient speechClient = new TranscriptionClient();
+    String text = speechClient.analyzeSpeech("gs:/" + this.getGcsPath());
+    this.setSpeechTranscipt(text);
   }
 
   public void populateVideoIntelligence() {
     VideoIntelClient videoClient = new VideoIntelClient();
     VideoIntelClient.VideoIntelResp resp = videoClient.analyzeVideo("gs:/" + this.getGcsPath());
-    this.videoIntelSegments = resp.segmentLabels;
-    this.videoIntelFrames = resp.frameLabels;
-    this.videoIntelShots = resp.shotLabels;
+    this.setVideoIntelSegments(resp.segmentLabels);
+    this.setVideoIntelFrames(resp.frameLabels);
+    this.setVideoIntelShots(resp.shotLabels);
   }
 
   // ................................................................
