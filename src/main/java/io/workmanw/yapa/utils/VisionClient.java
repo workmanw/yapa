@@ -29,17 +29,27 @@ import com.google.gson.JsonObject;
 public class VisionClient {
   private static final Logger log = Logger.getLogger(VisionClient.class.getName());
 
-  public List<VisionModel> detectLabels(String gcsPath) {
-    return this.processVisionAnalysis(gcsPath, Type.LABEL_DETECTION, VisionModel.TYPE_LABEL);
+  public class VisionResp {
+    public List<VisionModel> visionLabels;
+    public List<VisionModel> visionLandmarks;
+    public List<VisionModel> visionLogos;
+    public List<VisionModel> visionTexts;
+
+    public VisionResp() {
+      this.visionLabels = new ArrayList<>();
+      this.visionLandmarks = new ArrayList<>();
+      this.visionLogos = new ArrayList<>();
+      this.visionTexts = new ArrayList<>();
+    }
   }
-  public List<VisionModel> detectLandmarks(String gcsPath) {
-    return this.processVisionAnalysis(gcsPath, Type.LANDMARK_DETECTION, VisionModel.TYPE_LANDMARK);
-  }
-  public List<VisionModel> detectLogos(String gcsPath) {
-    return this.processVisionAnalysis(gcsPath, Type.LOGO_DETECTION, VisionModel.TYPE_LOGO);
-  }
-  public List<VisionModel> detectText(String gcsPath) {
-    return this.processVisionAnalysis(gcsPath, Type.TEXT_DETECTION, VisionModel.TYPE_TEXT);
+
+  public VisionResp analyzeImage(String gcsPath) {
+    VisionResp resp = new VisionResp();
+    resp.visionLabels = this.processVisionAnalysis(gcsPath, Type.LABEL_DETECTION, VisionModel.TYPE_LABEL);
+    resp.visionLandmarks = this.processVisionAnalysis(gcsPath, Type.LANDMARK_DETECTION, VisionModel.TYPE_LANDMARK);
+    resp.visionLogos = this.processVisionAnalysis(gcsPath, Type.LOGO_DETECTION, VisionModel.TYPE_LOGO);
+    resp.visionTexts = this.processVisionAnalysis(gcsPath, Type.TEXT_DETECTION, VisionModel.TYPE_TEXT);
+    return resp;
   }
 
   public List<VisionModel> processVisionAnalysis(String gcsPath, Type detectionType, String modelType) {
