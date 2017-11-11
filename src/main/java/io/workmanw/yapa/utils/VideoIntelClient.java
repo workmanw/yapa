@@ -3,7 +3,8 @@ package io.workmanw.yapa.utils;
 import com.google.api.gax.rpc.OperationFuture;
 import com.google.cloud.videointelligence.v1beta2.*;
 import com.google.longrunning.Operation;
-import io.workmanw.yapa.models.VideoIntelModel;
+import io.workmanw.yapa.models.AnalysisVideoIntelModel;
+import io.workmanw.yapa.models.AnalysisVideoIntelModel.VideoIntelItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +13,8 @@ import java.util.logging.Logger;
 public class VideoIntelClient {
   private static final Logger log = Logger.getLogger(VisionClient.class.getName());
 
-  public class VideoIntelResp {
-    public List<VideoIntelModel> segmentLabels;
-    public List<VideoIntelModel> shotLabels;
-    public List<VideoIntelModel> frameLabels;
-
-    public VideoIntelResp() {
-      this.segmentLabels = new ArrayList<>();
-      this.shotLabels = new ArrayList<>();
-      this.frameLabels = new ArrayList<>();
-    }
-  }
-
-  public VideoIntelResp analyzeVideo(String gcsUri) {
-    VideoIntelResp resp = new VideoIntelResp();
+  public AnalysisVideoIntelModel analyzeVideo(String gcsUri) {
+    List<VideoIntelItem> videoIntelItems = new ArrayList<>();
 
     try (VideoIntelligenceServiceClient client = VideoIntelligenceServiceClient.create()) {
       LabelDetectionConfig.Builder ldcBuilder = LabelDetectionConfig.newBuilder();
@@ -48,34 +37,34 @@ public class VideoIntelClient {
 
       for (VideoAnnotationResults results : operation.get().getAnnotationResultsList()) {
         for (LabelAnnotation labelAnnotation : results.getSegmentLabelAnnotationsList()) {
-          resp.segmentLabels.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelModel.TYPE_SEGEMENT_LABEL));
+          videoIntelItems.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelItem.TYPE_SEGEMENT_LABEL));
         }
 
         // process shot label annotations
         for (LabelAnnotation labelAnnotation : results.getShotLabelAnnotationsList()) {
-          resp.shotLabels.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelModel.TYPE_SHOT_LABEL));
+          videoIntelItems.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelItem.TYPE_SHOT_LABEL));
         }
 
         // process frame label annotations
         for (LabelAnnotation labelAnnotation : results.getFrameLabelAnnotationsList()) {
-          resp.frameLabels.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelModel.TYPE_FRAME_LABEL));
+          videoIntelItems.add(this.buildVideoIntelModel(labelAnnotation, VideoIntelItem.TYPE_FRAME_LABEL));
         }
       }
     } catch (Exception e) {
       log.severe(e.toString());
     }
 
-    return resp;
+    return new AnalysisVideoIntelModel(videoIntelItems);
   }
 
-  protected VideoIntelModel buildVideoIntelModel(LabelAnnotation labelAnnotation, String modelType) {
-    VideoIntelModel videoIntel = new VideoIntelModel();
-    videoIntel.setType(modelType);
-    videoIntel.setMid(labelAnnotation.getEntity().getEntityId());
-    videoIntel.setDescription(labelAnnotation.getEntity().getDescription());
-    videoIntel.setType(modelType);
-    videoIntel.setScore(this.scoreLabelAnnotation(labelAnnotation));
-    return videoIntel;
+  protected VideoIntelItem buildVideoIntelModel(LabelAnnotation labelAnnotation, String modelType) {
+    VideoIntelItem videoIntelItem = new VideoIntelItem();
+    videoIntelItem.setType(modelType);
+    videoIntelItem.setMid(labelAnnotation.getEntity().getEntityId());
+    videoIntelItem.setDescription(labelAnnotation.getEntity().getDescription());
+    videoIntelItem.setType(modelType);
+    videoIntelItem.setScore(this.scoreLabelAnnotation(labelAnnotation));
+    return videoIntelItem;
   }
 
   protected float scoreLabelAnnotation(LabelAnnotation labelAnnotation) {

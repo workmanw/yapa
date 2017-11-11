@@ -43,6 +43,8 @@ public class PhotoModel extends BaseModel {
   private Date createdOn;
 
   private DatastoreKey album;
+  private DatastoreKey analysisVision;
+  private DatastoreKey analysisVideoIntel;
   private String photoName;
   private String blobKey;
   private String contentType;
@@ -51,15 +53,6 @@ public class PhotoModel extends BaseModel {
   private String md5;
   private long filesize;
   private String servingUrl;
-
-  private List<VisionModel> visionLabels;
-  private List<VisionModel> visionLandmarks;
-  private List<VisionModel> visionLogos;
-  private List<VisionModel> visionTexts;
-
-  private List<VideoIntelModel> videoIntelSegments;
-  private List<VideoIntelModel> videoIntelShots;
-  private List<VideoIntelModel> videoIntelFrames;
 
   public long getId() {
     return this.id;
@@ -83,6 +76,26 @@ public class PhotoModel extends BaseModel {
   }
   public String getAlbumId() {
     return Long.toString(this.getAlbum().id(), 10);
+  }
+
+  public DatastoreKey getAnalysisVision() {
+    return this.analysisVision;
+  }
+  public void setAnalysisVision(DatastoreKey analysisVision) {
+    this.analysisVision = analysisVision;
+  }
+  public AnalysisVisionModel fetchAnalysisVision() {
+    return AnalysisVisionModel.getByKey(this.analysisVision);
+  }
+
+  public DatastoreKey getAnalysisVideoIntel() {
+    return this.analysisVideoIntel;
+  }
+  public void setAnalysisVideoIntel(DatastoreKey analysisVideoIntel) {
+    this.analysisVideoIntel = analysisVideoIntel;
+  }
+  public AnalysisVideoIntelModel fetchAnalysisVideoIntel() {
+    return AnalysisVideoIntelModel.getByKey(this.analysisVideoIntel);
   }
 
   public Date getCreatedOn() {
@@ -148,55 +161,6 @@ public class PhotoModel extends BaseModel {
     this.servingUrl = servingUrl;
   }
 
-  public List<VisionModel> getVisionLabels() {
-    return this.visionLabels;
-  }
-  public void setVisionLabels(List<VisionModel> visionLabels) {
-    this.visionLabels = visionLabels;
-  }
-
-  public List<VisionModel> getVisionLandmarks() {
-    return this.visionLandmarks;
-  }
-  public void setVisionLandmarks(List<VisionModel> visionLandmarks) {
-    this.visionLandmarks = visionLandmarks;
-  }
-
-  public List<VisionModel> getVisionLogos() {
-    return this.visionLogos;
-  }
-  public void setVisionLogos(List<VisionModel> visionLogos) {
-    this.visionLogos = visionLogos;
-  }
-
-  public List<VisionModel> getVisionTexts() {
-    return this.visionTexts;
-  }
-  public void setVisionTexts(List<VisionModel> visionTexts) {
-    this.visionTexts = visionTexts;
-  }
-
-  public List<VideoIntelModel> getVideoIntelSegments() {
-    return this.videoIntelSegments;
-  }
-  public void setVideoIntelSegments(List<VideoIntelModel> videoIntelSegments) {
-    this.videoIntelSegments = videoIntelSegments;
-  }
-
-  public List<VideoIntelModel> getVideoIntelShots() {
-    return this.videoIntelShots;
-  }
-  public void setVideoIntelShots(List<VideoIntelModel> videoIntelShots) {
-    this.videoIntelShots = videoIntelShots;
-  }
-
-  public List<VideoIntelModel> getVideoIntelFrames() {
-    return this.videoIntelFrames;
-  }
-  public void setVideoIntelFrames(List<VideoIntelModel> videoIntelFrames) {
-    this.videoIntelFrames = videoIntelFrames;
-  }
-
   public Boolean isImage() {
     return this.getContentType().startsWith("image/");
   }
@@ -244,48 +208,11 @@ public class PhotoModel extends BaseModel {
     String createdOn = df.format(this.getCreatedOn());
     jsonObj.addProperty("createdOn", createdOn);
 
-    jsonObj.add("vision", this.visionDataToJson());
-    jsonObj.add("videoIntel", this.videoIntelDataToJson());
+    // jsonObj.add("vision", this.visionDataToJson());
+    // jsonObj.add("videoIntel", this.videoIntelDataToJson());
     jsonObj.addProperty("speechTranscript", this.getSpeechTranscipt());
 
     return jsonObj;
-  }
-
-  protected JsonObject visionDataToJson() {
-    JsonObject visionJsonObj = new JsonObject();
-    visionJsonObj.add("labels", this.visionListToJson(this.getVisionLabels()));
-    visionJsonObj.add("landmarks", this.visionListToJson(this.getVisionLandmarks()));
-    visionJsonObj.add("logos", this.visionListToJson(this.getVisionLogos()));
-    visionJsonObj.add("texts", this.visionListToJson(this.getVisionTexts()));
-    return visionJsonObj;
-  }
-
-  protected JsonArray visionListToJson(List<VisionModel> models) {
-    JsonArray visionLabelsJson = new JsonArray();
-    if (models != null) {
-      for (VisionModel visionLabel : models) {
-        visionLabelsJson.add(visionLabel.toJson());
-      }
-    }
-    return visionLabelsJson;
-  }
-
-  protected JsonObject videoIntelDataToJson() {
-    JsonObject videoIntelJsonObj = new JsonObject();
-    videoIntelJsonObj.add("segments", this.videoIntelListToJson(this.getVideoIntelSegments()));
-    videoIntelJsonObj.add("shots", this.videoIntelListToJson(this.getVideoIntelShots()));
-    videoIntelJsonObj.add("frames", this.videoIntelListToJson(this.getVideoIntelFrames()));
-    return videoIntelJsonObj;
-  }
-
-  protected JsonArray videoIntelListToJson(List<VideoIntelModel> models) {
-    JsonArray videoIntelLabelsJson = new JsonArray();
-    if (models != null) {
-      for (VideoIntelModel videoIntelLabel : models) {
-        videoIntelLabelsJson.add(videoIntelLabel.toJson());
-      }
-    }
-    return videoIntelLabelsJson;
   }
 
   // ................................................................
@@ -312,7 +239,6 @@ public class PhotoModel extends BaseModel {
     // https://cloud.google.com/video-intelligence/docs/reference/libraries
     if (this.isImage()) {
       this.populateVisionData();
-      this.saveModel();
     } else if (this.isAudio()) {
       this.transcribeAudioFile();
       this.saveModel();
@@ -324,12 +250,11 @@ public class PhotoModel extends BaseModel {
 
   public void populateVisionData() {
     VisionClient visionClient = new VisionClient();
-    VisionClient.VisionResp resp = visionClient.analyzeImage("gs:/" + this.getGcsPath());
+    AnalysisVisionModel analysisVision = visionClient.analyzeImage("gs:/" + this.getGcsPath());
 
-    this.setVisionLabels(resp.visionLabels);
-    this.setVisionLandmarks(resp.visionLandmarks);
-    this.setVisionLogos(resp.visionLogos);
-    this.setVisionTexts(resp.visionTexts);
+    analysisVision = (AnalysisVisionModel) analysisVision.createModel();
+    this.setAnalysisVision(analysisVision.getKey());
+    this.saveModel();
   }
 
   private String speechTranscipt;
@@ -348,10 +273,11 @@ public class PhotoModel extends BaseModel {
 
   public void populateVideoIntelligence() {
     VideoIntelClient videoClient = new VideoIntelClient();
-    VideoIntelClient.VideoIntelResp resp = videoClient.analyzeVideo("gs:/" + this.getGcsPath());
-    this.setVideoIntelSegments(resp.segmentLabels);
-    this.setVideoIntelFrames(resp.frameLabels);
-    this.setVideoIntelShots(resp.shotLabels);
+    AnalysisVideoIntelModel analysisVideoIntel = videoClient.analyzeVideo("gs:/" + this.getGcsPath());
+
+    analysisVideoIntel = (AnalysisVideoIntelModel) analysisVideoIntel.createModel();
+    this.setAnalysisVideoIntel(analysisVideoIntel.getKey());
+    this.saveModel();
   }
 
   // ................................................................
@@ -360,16 +286,16 @@ public class PhotoModel extends BaseModel {
   public String getSearchText() {
     StringBuilder strBuilder = new StringBuilder();
     strBuilder.append(this.getPhotoName());
-    if (this.isImage()) {
-      List<VisionModel> visionModels = new ArrayList<VisionModel>();
-      visionModels.addAll(this.getVisionLabels());
-      visionModels.addAll(this.getVisionLandmarks());
-      visionModels.addAll(this.getVisionLogos());
-      visionModels.addAll(this.getVisionTexts());
-      for (VisionModel visionModel : visionModels) {
-        strBuilder.append(visionModel.getDescription() + " ");
-      }
-    }
+//    if (this.isImage()) {
+//      List<VisionModel> visionModels = new ArrayList<VisionModel>();
+//      visionModels.addAll(this.getVisionLabels());
+//      visionModels.addAll(this.getVisionLandmarks());
+//      visionModels.addAll(this.getVisionLogos());
+//      visionModels.addAll(this.getVisionTexts());
+//      for (VisionModel visionModel : visionModels) {
+//        strBuilder.append(visionModel.getDescription() + " ");
+//      }
+//    }
     return strBuilder.toString();
   }
 
@@ -381,6 +307,9 @@ public class PhotoModel extends BaseModel {
   }
   public static PhotoModel getById(long id) {
     return BaseModel.getById(PhotoModel.class, id);
+  }
+  public static PhotoModel getByKey(DatastoreKey key) {
+    return BaseModel.getByKey(PhotoModel.class, key);
   }
 
   public static void postProcess(String action, String id) {

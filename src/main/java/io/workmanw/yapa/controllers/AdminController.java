@@ -20,26 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/_admin")
 public class AdminController {
-  @RequestMapping(value="/check_vision", method=RequestMethod.POST)
-  public String checkPhotoVisionData() {
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    EntityQueryRequest request = em.createEntityQueryRequest("SELECT * FROM Photo");
-    QueryResponse<PhotoModel> response = em.executeEntityQueryRequest(PhotoModel.class, request);
-
-    List<PhotoModel> entities = response.getResults();
-    List<PhotoModel> reanalyzedPhotos = new ArrayList<PhotoModel>();
-    for (PhotoModel photo : entities) {
-      if (photo.getVisionLabels() == null) {
-        photo.populateVisionData();
-        photo.saveModel();
-        reanalyzedPhotos.add(photo);
-      }
-    }
-
-    return new RestSerializer().addPhotos(reanalyzedPhotos).toString();
-  }
-
   @RequestMapping(value="/update_album_previews", method=RequestMethod.POST)
   public String updateAlbumPreviews() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
@@ -62,6 +42,4 @@ public class AdminController {
 
     return new RestSerializer().toString();
   }
-
-
 }

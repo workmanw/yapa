@@ -2,9 +2,10 @@ package io.workmanw.yapa.controllers;
 
 import static io.workmanw.yapa.Constants.GCS_BUCKET;
 import io.workmanw.yapa.models.AlbumModel;
+import io.workmanw.yapa.models.AnalysisVisionModel;
+import io.workmanw.yapa.models.AnalysisVideoIntelModel;
 import io.workmanw.yapa.models.PhotoModel;
 import io.workmanw.yapa.utils.SearchClient;
-import io.workmanw.yapa.utils.TaskClient;
 
 import java.util.Map;
 import java.util.List;
@@ -83,6 +84,20 @@ public class PhotoController extends BaseController<PhotoModel> {
     photo.fromBlobInfo(album, bi);
     photo = (PhotoModel) photo.createModel();
     return this.serialize(photo);
+  }
+
+  @RequestMapping(value="/{id}/analysis/vision", method=RequestMethod.GET)
+  public String getAnalysisVision(@PathVariable long id) {
+    PhotoModel photo = this.getEntityById(id);
+    AnalysisVisionModel analysisVision = photo.fetchAnalysisVision();
+    return analysisVision.toJson().toString();
+  }
+
+  @RequestMapping(value="/{id}/analysis/video-intel", method=RequestMethod.GET)
+  public String getAnalysisVideoIntel(@PathVariable long id) {
+    PhotoModel photo = this.getEntityById(id);
+    AnalysisVideoIntelModel analysisVideoIntel = photo.fetchAnalysisVideoIntel();
+    return analysisVideoIntel.toJson().toString();
   }
 
   protected BlobInfo getBlobInfo(BlobKey bk) {

@@ -1,5 +1,6 @@
 package io.workmanw.yapa.models;
 
+import com.jmethods.catatumbo.DatastoreKey;
 import io.workmanw.yapa.utils.TaskClient;
 
 import com.jmethods.catatumbo.EntityManagerFactory;
@@ -58,6 +59,11 @@ public class BaseModel extends Object {
     EntityManager em = emf.createDefaultEntityManager();
     return em.load(modelClass, id);
   }
+
+  public static <E> E getByKey(Class<E> modelClass, DatastoreKey key) {
+    return BaseModel.getById(modelClass, key.id());
+  }
+
 
   public static void postProcess(String action, String id) { }
 }

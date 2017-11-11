@@ -91,4 +91,7 @@ public class AlbumModel extends BaseModel {
   public static AlbumModel getById(long id) {
     return BaseModel.getById(AlbumModel.class, id);
   }
+  public static AlbumModel getByKey(DatastoreKey key) {
+    return BaseModel.getByKey(AlbumModel.class, key);
+  }
 }

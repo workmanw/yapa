@@ -1,6 +1,7 @@
 package io.workmanw.yapa.utils;
 
-import io.workmanw.yapa.models.VisionModel;
+import io.workmanw.yapa.models.AnalysisVisionModel;
+import io.workmanw.yapa.models.AnalysisVisionModel.VisionItem;
 
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
@@ -14,9 +15,6 @@ import com.google.cloud.vision.v1.ImageSource;
 
 import com.google.protobuf.ByteString;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,31 +27,23 @@ import com.google.gson.JsonObject;
 public class VisionClient {
   private static final Logger log = Logger.getLogger(VisionClient.class.getName());
 
-  public class VisionResp {
-    public List<VisionModel> visionLabels;
-    public List<VisionModel> visionLandmarks;
-    public List<VisionModel> visionLogos;
-    public List<VisionModel> visionTexts;
+  public AnalysisVisionModel analyzeImage(String gcsPath) {
+    List<VisionItem> visionLabels = this.processVisionAnalysis(gcsPath, Type.LABEL_DETECTION, VisionItem.TYPE_LABEL);
+    List<VisionItem> visionLandmarks = this.processVisionAnalysis(gcsPath, Type.LANDMARK_DETECTION, VisionItem.TYPE_LANDMARK);
+    List<VisionItem> visionLogos = this.processVisionAnalysis(gcsPath, Type.LOGO_DETECTION, VisionItem.TYPE_LOGO);
+    List<VisionItem> visionTexts = this.processVisionAnalysis(gcsPath, Type.TEXT_DETECTION, VisionItem.TYPE_TEXT);
 
-    public VisionResp() {
-      this.visionLabels = new ArrayList<>();
-      this.visionLandmarks = new ArrayList<>();
-      this.visionLogos = new ArrayList<>();
-      this.visionTexts = new ArrayList<>();
-    }
+    List<VisionItem> allVisionItems = new ArrayList<>();
+    allVisionItems.addAll(visionLabels);
+    allVisionItems.addAll(visionLandmarks);
+    allVisionItems.addAll(visionLogos);
+    allVisionItems.addAll(visionTexts);
+
+    return new AnalysisVisionModel(allVisionItems);
   }
 
-  public VisionResp analyzeImage(String gcsPath) {
-    VisionResp resp = new VisionResp();
-    resp.visionLabels = this.processVisionAnalysis(gcsPath, Type.LABEL_DETECTION, VisionModel.TYPE_LABEL);
-    resp.visionLandmarks = this.processVisionAnalysis(gcsPath, Type.LANDMARK_DETECTION, VisionModel.TYPE_LANDMARK);
-    resp.visionLogos = this.processVisionAnalysis(gcsPath, Type.LOGO_DETECTION, VisionModel.TYPE_LOGO);
-    resp.visionTexts = this.processVisionAnalysis(gcsPath, Type.TEXT_DETECTION, VisionModel.TYPE_TEXT);
-    return resp;
-  }
-
-  public List<VisionModel> processVisionAnalysis(String gcsPath, Type detectionType, String modelType) {
-    List<VisionModel> visionModels = new ArrayList<VisionModel>();
+  public List<VisionItem> processVisionAnalysis(String gcsPath, Type detectionType, String modelType) {
+    List<VisionItem> visionModels = new ArrayList<VisionItem>();
 
     try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
       List<AnnotateImageRequest> requests = new ArrayList<>();
@@ -73,8 +63,8 @@ public class VisionClient {
           String err = String.format("Error: %s\n", resp.getError().getMessage());
           log.severe(err);
         } else {
-          List<VisionModel> mappedVisionModels = this.mapVisionModel(resp, detectionType, modelType);
-          visionModels.addAll(mappedVisionModels);
+          List<VisionItem> mappedVisionItems = this.mapVisionModel(resp, detectionType, modelType);
+          visionModels.addAll(mappedVisionItems);
         }
       }
     } catch (IOException e) {
@@ -84,8 +74,8 @@ public class VisionClient {
     return visionModels;
   }
 
-  protected List<VisionModel> mapVisionModel(AnnotateImageResponse resp, Type detectionType, String modelType) {
-    List<VisionModel> visionModels = new ArrayList<VisionModel>();
+  protected List<VisionItem> mapVisionModel(AnnotateImageResponse resp, Type detectionType, String modelType) {
+    List<VisionItem> visionModels = new ArrayList<>();
     List<EntityAnnotation> annotations = null;
 
     if (detectionType == Type.LABEL_DETECTION) {
@@ -100,14 +90,14 @@ public class VisionClient {
 
     if (annotations != null) {
       for (EntityAnnotation annotation : annotations) {
-        VisionModel visionModel = new VisionModel();
-        visionModel.setType(modelType);
+        VisionItem visionItem = new VisionItem();
+        visionItem.setType(modelType);
         String mid = (annotation.getMid() != null) ? annotation.getMid() : "";
-        visionModel.setMid(mid);
+        visionItem.setMid(mid);
         String description = (annotation.getDescription() != null) ? annotation.getDescription() : "";
-        visionModel.setDescription(description);
-        visionModel.setScore(annotation.getScore());
-        visionModels.add(visionModel);
+        visionItem.setDescription(description);
+        visionItem.setScore(annotation.getScore());
+        visionModels.add(visionItem);
       }
     }
 
