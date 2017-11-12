@@ -44,6 +44,7 @@ public class PhotoModel extends BaseModel {
 
   private DatastoreKey album;
   private DatastoreKey analysisVision;
+  private DatastoreKey analysisSpeech;
   private DatastoreKey analysisVideoIntel;
   private String photoName;
   private String blobKey;
@@ -85,7 +86,23 @@ public class PhotoModel extends BaseModel {
     this.analysisVision = analysisVision;
   }
   public AnalysisVisionModel fetchAnalysisVision() {
-    return AnalysisVisionModel.getByKey(this.analysisVision);
+    return AnalysisVisionModel.getByKey(this.getAnalysisVision());
+  }
+  public Boolean hasAnalysisVision() {
+    return this.getAnalysisVision() != null;
+  }
+
+  public DatastoreKey getAnalysisSpeech() {
+    return this.analysisSpeech;
+  }
+  public void setAnalysisSpeech(DatastoreKey analysisSpeech) {
+    this.analysisSpeech = analysisSpeech;
+  }
+  public AnalysisSpeechModel fetchAnalysisSpeech() {
+    return AnalysisSpeechModel.getByKey(this.getAnalysisSpeech());
+  }
+  public Boolean hasAnalysisSpeech() {
+    return this.getAnalysisSpeech() != null;
   }
 
   public DatastoreKey getAnalysisVideoIntel() {
@@ -95,7 +112,10 @@ public class PhotoModel extends BaseModel {
     this.analysisVideoIntel = analysisVideoIntel;
   }
   public AnalysisVideoIntelModel fetchAnalysisVideoIntel() {
-    return AnalysisVideoIntelModel.getByKey(this.analysisVideoIntel);
+    return AnalysisVideoIntelModel.getByKey(this.getAnalysisVideoIntel());
+  }
+  public Boolean hasAnalysisVideoIntel() {
+    return this.getAnalysisVideoIntel() != null;
   }
 
   public Date getCreatedOn() {
@@ -208,9 +228,9 @@ public class PhotoModel extends BaseModel {
     String createdOn = df.format(this.getCreatedOn());
     jsonObj.addProperty("createdOn", createdOn);
 
-    // jsonObj.add("vision", this.visionDataToJson());
-    // jsonObj.add("videoIntel", this.videoIntelDataToJson());
-    jsonObj.addProperty("speechTranscript", this.getSpeechTranscipt());
+    jsonObj.addProperty("hasAnalysisVision", this.hasAnalysisVision());
+    jsonObj.addProperty("hasAnalysisSpeech", this.hasAnalysisSpeech());
+    jsonObj.addProperty("hasAnalysisVideoIntel", this.hasAnalysisVideoIntel());
 
     return jsonObj;
   }
@@ -257,18 +277,13 @@ public class PhotoModel extends BaseModel {
     this.saveModel();
   }
 
-  private String speechTranscipt;
-  public String getSpeechTranscipt() {
-    return this.speechTranscipt;
-  }
-  public void setSpeechTranscipt(String speechTranscipt) {
-    this.speechTranscipt = speechTranscipt;
-  }
-
   public void transcribeAudioFile() {
     TranscriptionClient speechClient = new TranscriptionClient();
-    String text = speechClient.analyzeSpeech("gs:/" + this.getGcsPath());
-    this.setSpeechTranscipt(text);
+    AnalysisSpeechModel analyzeSpeech = speechClient.analyzeSpeech("gs:/" + this.getGcsPath());
+
+    analyzeSpeech = (AnalysisSpeechModel) analyzeSpeech.createModel();
+    this.setAnalysisSpeech(analyzeSpeech.getKey());
+    this.saveModel();
   }
 
   public void populateVideoIntelligence() {
@@ -286,16 +301,9 @@ public class PhotoModel extends BaseModel {
   public String getSearchText() {
     StringBuilder strBuilder = new StringBuilder();
     strBuilder.append(this.getPhotoName());
-//    if (this.isImage()) {
-//      List<VisionModel> visionModels = new ArrayList<VisionModel>();
-//      visionModels.addAll(this.getVisionLabels());
-//      visionModels.addAll(this.getVisionLandmarks());
-//      visionModels.addAll(this.getVisionLogos());
-//      visionModels.addAll(this.getVisionTexts());
-//      for (VisionModel visionModel : visionModels) {
-//        strBuilder.append(visionModel.getDescription() + " ");
-//      }
-//    }
+    if (this.isImage()) {
+
+    }
     return strBuilder.toString();
   }
 

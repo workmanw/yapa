@@ -79,7 +79,7 @@
       <artifactId>google-cloud-speech</artifactId>
       <version>0.26.0-alpha</version>
     </dependency>
-    
+
     <dependency>
       <groupId>com.jmethods</groupId>
       <artifactId>catatumbo</artifactId>

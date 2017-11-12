@@ -2,6 +2,7 @@ package io.workmanw.yapa.controllers;
 
 import static io.workmanw.yapa.Constants.GCS_BUCKET;
 import io.workmanw.yapa.models.AlbumModel;
+import io.workmanw.yapa.models.AnalysisSpeechModel;
 import io.workmanw.yapa.models.AnalysisVisionModel;
 import io.workmanw.yapa.models.AnalysisVideoIntelModel;
 import io.workmanw.yapa.models.PhotoModel;
@@ -89,13 +90,35 @@ public class PhotoController extends BaseController<PhotoModel> {
   @RequestMapping(value="/{id}/analysis/vision", method=RequestMethod.GET)
   public String getAnalysisVision(@PathVariable long id) {
     PhotoModel photo = this.getEntityById(id);
+
+    if (!photo.hasAnalysisVision()) {
+      throw new ResourceNotFoundException();
+    }
+
     AnalysisVisionModel analysisVision = photo.fetchAnalysisVision();
     return analysisVision.toJson().toString();
+  }
+
+  @RequestMapping(value="/{id}/analysis/speech", method=RequestMethod.GET)
+  public String getAnalysisSpeecht(@PathVariable long id) {
+    PhotoModel photo = this.getEntityById(id);
+
+    if (!photo.hasAnalysisSpeech()) {
+      throw new ResourceNotFoundException();
+    }
+
+    AnalysisSpeechModel analysisSpeech = photo.fetchAnalysisSpeech();
+    return analysisSpeech.toJson().toString();
   }
 
   @RequestMapping(value="/{id}/analysis/video-intel", method=RequestMethod.GET)
   public String getAnalysisVideoIntel(@PathVariable long id) {
     PhotoModel photo = this.getEntityById(id);
+
+    if (!photo.hasAnalysisVideoIntel()) {
+      throw new ResourceNotFoundException();
+    }
+
     AnalysisVideoIntelModel analysisVideoIntel = photo.fetchAnalysisVideoIntel();
     return analysisVideoIntel.toJson().toString();
   }
