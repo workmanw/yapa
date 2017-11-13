@@ -1,20 +1,76 @@
 package io.workmanw.yapa.models;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.jmethods.catatumbo.DatastoreKey;
-import com.jmethods.catatumbo.Entity;
-import com.jmethods.catatumbo.Identifier;
-import com.jmethods.catatumbo.Key;
-import com.jmethods.catatumbo.Property;
+import com.jmethods.catatumbo.*;
+
+import java.util.List;
+
 
 @Entity(kind="AnalysisSpeech")
 public class AnalysisSpeechModel extends BaseModel {
+    @Embeddable
+    static public class EntityItem {
+        private String name;
+        private String type;
+        private String mid;
+        private String wikipediaUrl;
+        private float salience;
+
+        public String getName() {
+            return this.name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return this.type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getMid() {
+            return this.mid;
+        }
+        public void setMid(String mid) {
+            this.mid = mid;
+        }
+
+        public String getWikipediaUrl() {
+            return this.wikipediaUrl;
+        }
+        public void setWikipediaUrl(String wikipediaUrl) {
+            this.wikipediaUrl = wikipediaUrl;
+        }
+
+        public float getSalience() {
+            return this.salience;
+        }
+        public void setSalience(float salience) {
+            this.salience = salience;
+        }
+
+        public JsonObject toJson() {
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("name", this.getName());
+            jsonObj.addProperty("type", this.getType());
+            jsonObj.addProperty("mid", this.getMid());
+            jsonObj.addProperty("wikipediaUrl", this.getWikipediaUrl());
+            jsonObj.addProperty("salience", this.getSalience());
+            return jsonObj;
+        }
+    }
+
     @Identifier
     protected long id;
     @Key
     protected DatastoreKey key;
+
     @Property(indexed = false)
     private String transcript;
+    private List<EntityItem> entities;
 
     public AnalysisSpeechModel() { }
 
@@ -39,9 +95,21 @@ public class AnalysisSpeechModel extends BaseModel {
         this.transcript = transcript;
     }
 
+    public List<EntityItem> getEntities() {
+        return this.entities;
+    }
+    public void setEntities(List<EntityItem> entities) {
+        this.entities = entities;
+    }
+
     public JsonObject toJson() {
         JsonObject speechJsonObj = new JsonObject();
+        JsonArray entitiesJson = new JsonArray();
+        for (EntityItem entityItem : this.getEntities()) {
+            entitiesJson.add(entityItem.toJson());
+        }
         speechJsonObj.addProperty("transcript", this.getTranscript());
+        speechJsonObj.add("entity", entitiesJson);
         return speechJsonObj;
     }
 

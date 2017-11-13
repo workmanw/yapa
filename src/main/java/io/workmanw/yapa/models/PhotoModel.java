@@ -3,7 +3,7 @@ package io.workmanw.yapa.models;
 import io.workmanw.yapa.utils.VisionClient;
 import io.workmanw.yapa.utils.VideoIntelClient;
 import io.workmanw.yapa.utils.SearchClient;
-import io.workmanw.yapa.utils.TranscriptionClient;
+import io.workmanw.yapa.utils.SpeechClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -20,12 +20,9 @@ import com.jmethods.catatumbo.CreatedTimestamp;
 import java.lang.StringBuilder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity(kind="Photo")
@@ -278,7 +275,7 @@ public class PhotoModel extends BaseModel {
   }
 
   public void transcribeAudioFile() {
-    TranscriptionClient speechClient = new TranscriptionClient();
+    SpeechClient speechClient = new SpeechClient();
     AnalysisSpeechModel analyzeSpeech = speechClient.analyzeSpeech("gs:/" + this.getGcsPath());
 
     analyzeSpeech = (AnalysisSpeechModel) analyzeSpeech.createModel();

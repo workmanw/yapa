@@ -13,16 +13,12 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageSource;
 
-import com.google.protobuf.ByteString;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 public class VisionClient {
   private static final Logger log = Logger.getLogger(VisionClient.class.getName());

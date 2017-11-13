@@ -1,7 +1,5 @@
 package io.workmanw.yapa.utils;
 
-import io.workmanw.yapa.models.PhotoModel;
-
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
