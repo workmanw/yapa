@@ -14,7 +14,6 @@ import com.google.gson.JsonObject;
 @Entity(kind="Album")
 public class AlbumModel extends BaseModel {
   public AlbumModel() { }
-  public String getKind() { return "Album"; }
 
   @Identifier
   protected long id;

@@ -4,6 +4,7 @@ import io.workmanw.yapa.utils.VisionClient;
 import io.workmanw.yapa.utils.VideoIntelClient;
 import io.workmanw.yapa.utils.SearchClient;
 import io.workmanw.yapa.utils.SpeechClient;
+import io.workmanw.yapa.utils.TaskClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -30,7 +31,6 @@ public class PhotoModel extends BaseModel {
   protected static Class modelClass = PhotoModel.class;
 
   public PhotoModel() { }
-  public String getKind() { return "Photo"; }
 
   @Identifier
   protected long id;
@@ -253,9 +253,13 @@ public class PhotoModel extends BaseModel {
   // Analysis support
   //
   public void populateAnalysisData() {
-    // https://cloud.google.com/video-intelligence/docs/reference/libraries
+    this.schedulePostProcessAction("_populateAnalysisData");
+  }
+
+  public void _populateAnalysisData() {
     if (this.isImage()) {
       this.populateVisionData();
+      this.saveModel();
     } else if (this.isAudio()) {
       this.transcribeAudioFile();
       this.saveModel();
@@ -304,6 +308,28 @@ public class PhotoModel extends BaseModel {
     return strBuilder.toString();
   }
 
+  public void createSearchDoc() {
+    this.schedulePostProcessAction("_createSearchDoc");
+  }
+  public void _createSearchDoc() {
+    SearchClient sc = new SearchClient();
+    sc.createPhotoDocument(this);
+  }
+
+
+  public void updateSearchDoc() {
+    this.schedulePostProcessAction("_updateSearchDoc");
+  }
+  public void _updateSearchDoc() {
+    SearchClient sc = new SearchClient();
+    sc.updatePhotoDocument(this);
+  }
+
+  public static void deleteSearchDoc(String id) {
+    SearchClient sc = new SearchClient();
+    sc.deletePhotoDocument(id);
+  }
+
   // ................................................................
   // Static utils
   //
@@ -317,22 +343,19 @@ public class PhotoModel extends BaseModel {
     return BaseModel.getByKey(PhotoModel.class, key);
   }
 
-  public static void postProcess(String action, String id) {
-    SearchClient sc = new SearchClient();
-
+  public static void postProcess(String id, String action) {
     if (action.equals("CREATE")) {
       PhotoModel photo = PhotoModel.getById(id);
       photo.populateAnalysisData();
-
-      sc.createPhotoDocument(photo);
+      photo.createSearchDoc();
 
       AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
       albumModel.addPreviewImageUrl(photo.getServingUrl());
     } else if (action.equals("UPDATE")) {
       PhotoModel photo = PhotoModel.getById(id);
-      sc.updatePhotoDocument(photo);
+      photo.updateSearchDoc();
     } else if (action.equals("DELETE")) {
-      sc.deletePhotoDocument(id);
+      PhotoModel.deleteSearchDoc(id);
     }
   }
 }

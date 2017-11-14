@@ -12,13 +12,12 @@ public class BaseModel extends Object {
   public BaseModel() { }
 
   public long getId() { return 0; }
-  public String getKind() { return ""; }
 
   public BaseModel createModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     BaseModel newModel = em.insert(this);
-    newModel.schedulePostProcess("CREATE");
+    newModel.schedulePostProcessCrud("CREATE");
     return newModel;
   }
 
@@ -26,21 +25,28 @@ public class BaseModel extends Object {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.update(this);
-    this.schedulePostProcess("UPDATE");
+    this.schedulePostProcessCrud("UPDATE");
   }
 
   public void deleteModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.delete(this);
-    this.schedulePostProcess("DELETE");
+    this.schedulePostProcessCrud("DELETE");
   }
 
-  public void schedulePostProcess(String action) {
-    String kind = this.getKind();
+  public void schedulePostProcessCrud(String action) {
+    String kind = this.getClass().getSimpleName();
     String sId = Long.toString(this.getId(), 10);
     TaskClient taskClient = new TaskClient();
-    taskClient.scheduleModelPostProcess(action, kind, sId);
+    taskClient.scheduleModelPostProcessCrud(kind, sId, action);
+  }
+
+  public void schedulePostProcessAction(String methodName) {
+    String kind = this.getClass().getSimpleName();
+    String sId = Long.toString(this.getId(), 10);
+    TaskClient taskClient = new TaskClient();
+    taskClient.scheduleModelPostProcessAction(kind, sId, methodName);
   }
 
   public JsonObject toJson() {
@@ -65,5 +71,5 @@ public class BaseModel extends Object {
   }
 
 
-  public static void postProcess(String action, String id) { }
+  public static void postProcess(String id, String action) { }
 }

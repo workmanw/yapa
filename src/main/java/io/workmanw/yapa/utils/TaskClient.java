@@ -9,13 +9,23 @@ import java.util.logging.Logger;
 public class TaskClient {
   private static final Logger log = Logger.getLogger(TaskClient.class.getName());
 
-  public void scheduleModelPostProcess(String action, String kind, String id) {
+  public void scheduleModelPostProcessCrud(String kind, String id, String action) {
     Queue postProcessQueue = QueueFactory.getQueue("post-process");
     TaskOptions taskOpts = TaskOptions.Builder
-      .withUrl("/_tasks/post_process")
-      .param("action", action)
+      .withUrl("/_tasks/post_process_crud")
       .param("kind", kind)
-      .param("id", id);
+      .param("id", id)
+      .param("action", action);
+    postProcessQueue.add(taskOpts);
+  }
+
+  public void scheduleModelPostProcessAction(String kind, String id, String action) {
+    Queue postProcessQueue = QueueFactory.getQueue("post-process");
+    TaskOptions taskOpts = TaskOptions.Builder
+      .withUrl("/_tasks/post_process_action")
+      .param("id", id)
+      .param("kind", kind)
+      .param("action", action);
     postProcessQueue.add(taskOpts);
   }
 }
