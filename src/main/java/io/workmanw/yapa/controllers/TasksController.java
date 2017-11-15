@@ -23,9 +23,9 @@ public class TasksController {
     try {
       Class<?> modelClass = this.getModelClass(kind);
       Method postProcessMethod = modelClass.getDeclaredMethod("postProcess", String.class, String.class);
-      if (postProcessMethod != null) {
-        postProcessMethod.invoke(null, id, action);
-      }
+      postProcessMethod.invoke(null, id, action);
+    } catch (NoSuchMethodException e) {
+      // Nothing to do, just swallow this exception because it means the model has no postProcess defined.
     } catch (Exception e) {
       log.severe(e.toString());
     }
@@ -41,9 +41,7 @@ public class TasksController {
     try {
       Object modelInstance = this.getModelInstance(kind, id);
       Method actionMethod = modelInstance.getClass().getDeclaredMethod(action);
-      if (actionMethod != null) {
-        actionMethod.invoke(modelInstance);
-      }
+      actionMethod.invoke(modelInstance);
     } catch (Exception e) {
       log.severe(e.toString());
     }

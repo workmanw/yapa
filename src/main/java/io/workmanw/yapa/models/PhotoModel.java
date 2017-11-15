@@ -302,9 +302,20 @@ public class PhotoModel extends BaseModel {
   public String getSearchText() {
     StringBuilder strBuilder = new StringBuilder();
     strBuilder.append(this.getPhotoName());
-    if (this.isImage()) {
 
+    if (this.hasAnalysisVision()) {
+      AnalysisVisionModel visionModel = this.fetchAnalysisVision();
+      strBuilder.append(visionModel.getSearchText());
     }
+    if (this.hasAnalysisSpeech()) {
+      AnalysisSpeechModel speechModel = this.fetchAnalysisSpeech();
+      strBuilder.append(speechModel.getSearchText());
+    }
+    if (this.hasAnalysisVideoIntel()) {
+      AnalysisVideoIntelModel videoIntelModel = this.fetchAnalysisVideoIntel();
+      strBuilder.append(videoIntelModel.getSearchText());
+    }
+
     return strBuilder.toString();
   }
 
