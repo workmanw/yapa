@@ -25,6 +25,28 @@ export default Ember.Controller.extend({
     });
   },
 
+  loadAnalysisData() {
+    let selectedPhoto = this.get('selectedPhoto');
+
+    this.set('selectedVisionData', null);
+    this.set('selectedSpeechData', null);
+    this.set('selectedVideoIntelData', null);
+
+    if (selectedPhoto.get('hasAnalysisVision')) {
+      selectedPhoto.fetchVisionData().then(visionData => {
+        this.set('selectedVisionData', visionData);
+      });
+    } else if (selectedPhoto.get('hasAnalysisSpeech')) {
+      selectedPhoto.fetchSpeechData().then(speechData => {
+        this.set('selectedSpeechData', speechData);
+      });
+    } else if (selectedPhoto.get('hasAnalysisVideoIntel')) {
+      selectedPhoto.fetchVideoIntelData().then(videoIntelData => {
+        this.set('selectedVideoIntelData', videoIntelData);
+      });
+    }
+  },
+
   actions: {
     editAlbum() {
       this.set('showEditAlbumModal', true);
@@ -58,13 +80,16 @@ export default Ember.Controller.extend({
 
     selectPhoto(photo) {
       this.set('selectedPhoto', photo);
+      this.loadAnalysisData();
     },
 
     refreshSelectedPhoto() {
       let selectedPhoto = this.get('selectedPhoto');
       if (selectedPhoto) {
         this.set('isRefreshingPhoto', true);
-        selectedPhoto.reload().finally(() => {
+        selectedPhoto.reload().then(() => {
+          this.loadAnalysisData();
+        }).finally(() => {
           this.set('isRefreshingPhoto', false);
         });
       }

@@ -12,5 +12,27 @@ export default DS.Model.extend({
   gcsPath: DS.attr('string'),
   md5: DS.attr('string'),
   servingUrl: DS.attr('string'),
-  vision: DS.attr()
+
+  hasAnalysisVision: DS.attr('boolean'),
+  hasAnalysisSpeech: DS.attr('boolean'),
+  hasAnalysisVideoIntel: DS.attr('boolean'),
+
+  fetchVisionData() {
+    return this.fetchAnalysisData('vision');
+  },
+
+  fetchSpeechData() {
+    return this.fetchAnalysisData('speech');
+  },
+
+  fetchVideoIntelData() {
+    return this.fetchAnalysisData('video-intel');
+  },
+
+  fetchAnalysisData(type) {
+    let modelName = this.constructor.modelName;
+    let adapter = this.store.adapterFor(modelName);
+    let baseUrl = adapter._buildURL(modelName, this.get('id'));
+    return adapter.ajax(`${baseUrl}/analysis/${type}`, 'GET');
+  }
 });

@@ -89,10 +89,18 @@
         </div>
       </div>
 
-      {{photo-details-vision label="Labels" visionDetails=selectedPhoto.vision.labels}}
-      {{photo-details-vision label="Landmarks" visionDetails=selectedPhoto.vision.landmarks}}
-      {{photo-details-vision label="Logos" visionDetails=selectedPhoto.vision.logos}}
-      {{photo-details-vision label="Text" visionDetails=selectedPhoto.vision.texts}}
+      {{#if selectedVisionData.hasAnalysisVision}}
+        {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
+        {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
+        {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
+        {{photo-details-vision label="Text" visionDetails=selectedVisionData.texts}}
+      {{else if selectedVisionData.hasAnalysisSpeech}}
+
+      {{else if selectedVisionData.hasAnalysisVideoIntel}}
+        {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
+        {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
+        {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
+      {{/if}}
     </div>
   </div>
 {{/file-uploader}}
