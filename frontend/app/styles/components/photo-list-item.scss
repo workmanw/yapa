@@ -3,9 +3,10 @@
   margin: 0 10px 10px 0;
   max-height: 120px;
 
-  .placeholder {
+  .photo-placeholder {
     width: 160px;
-    height: 120px;
+    min-height: 120px;
+    height: 100%;
   }
 
   &.square {

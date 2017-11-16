@@ -1,0 +1,27 @@
+.photo-details-analysis-items {
+  margin: 14px;
+  h4 { margin: 0; }
+  .no-analysis-data { color: #69818C; font-style: italic; }
+
+  table {
+    margin: 0px 18px;
+    width: 350px;
+    text-align: left;
+    th {
+      min-width: 80px;
+    }
+  }
+  .collapse-toggle {
+    color: #00AEEF;
+    cursor: pointer;
+    margin: 6px 26px 0 22px;
+    font-size: 12px;
+    text-transform: uppercase;
+    background: #EFEFEF;
+    text-align: center;
+    border: 1px solid #CACACA;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

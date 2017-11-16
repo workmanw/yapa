@@ -20,16 +20,25 @@ export default Ember.Component.extend({
     this.set('selectedVideoIntelData', null);
 
     if (photo.get('hasAnalysisVision')) {
+      this.set('isLoadingAnalysisVision', true);
       photo.fetchVisionData().then(visionData => {
         this.set('selectedVisionData', visionData);
+      }).finally(() => {
+        this.set('isLoadingAnalysisVision', false);
       });
     } else if (photo.get('hasAnalysisSpeech')) {
+      this.set('isLoadingAnalysisSpeech', true);
       photo.fetchSpeechData().then(speechData => {
         this.set('selectedSpeechData', speechData);
+      }).finally(() => {
+        this.set('isLoadingAnalysisSpeech', false);
       });
     } else if (photo.get('hasAnalysisVideoIntel')) {
+      this.set('isLoadingAnalysisVideo', true);
       photo.fetchVideoIntelData().then(videoIntelData => {
         this.set('selectedVideoIntelData', videoIntelData);
+      }).finally(() => {
+        this.set('isLoadingAnalysisVideo', false);
       });
     }
   },

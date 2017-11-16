@@ -7,7 +7,11 @@
 </div>
 <div class="detail-contents">
   <div class="details-image">
-    {{hpis-image height=240 url=photo.servingUrl}}
+    {{#if photo.servingUrl}}
+      {{hpis-image height=240 url=photo.servingUrl}}
+    {{else}}
+      {{photo-placeholder larger=true photo=photo}}
+    {{/if}}
   </div>
 
   <div class="detail-list">
@@ -58,15 +62,16 @@
   </div>
 
   {{#if photo.hasAnalysisVision}}
-    {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
-    {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
-    {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
-    {{photo-details-vision label="Text" visionDetails=selectedVisionData.texts}}
+    {{photo-details-analysis-items label="Labels" type="vision" items=selectedVisionData.labels isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items label="Landmarks" type="vision" items=selectedVisionData.landmarks isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items label="Logos" type="vision" items=selectedVisionData.logos isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items label="Text" type="vision" items=selectedVisionData.texts isLoading=isLoadingAnalysisVision}}
   {{else if photo.hasAnalysisSpeech}}
-
+    {{photo-details-analysis-transcript transcript=selectedSpeechData.transcript isLoading=isLoadingAnalysisSpeech}}
+    {{photo-details-analysis-items label="Entities" type="speech" items=selectedSpeechData.entity isLoading=isLoadingAnalysisSpeech}}
   {{else if photo.hasAnalysisVideoIntel}}
-    {{photo-details-vision label="Segments" visionDetails=selectedVisionData.segments}}
-    {{photo-details-vision label="Shots" visionDetails=selectedVisionData.shots}}
-    {{photo-details-vision label="Frames" visionDetails=selectedVisionData.frames}}
+    {{photo-details-analysis-items label="Segments" type="videoIntel" items=selectedVideoIntelData.segments isLoading=isLoadingAnalysisVideo}}
+    {{photo-details-analysis-items label="Shots" type="videoIntel" items=selectedVideoIntelData.shots isLoading=isLoadingAnalysisVideo}}
+    {{photo-details-analysis-items label="Frames" type="videoIntel" items=selectedVideoIntelData.frames isLoading=isLoadingAnalysisVideo}}
   {{/if}}
 </div>

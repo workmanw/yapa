@@ -1,0 +1,14 @@
+<h4>Transcript</h4>
+
+{{#if isLoading}}
+  <span class="no-analysis-data">Loading Data ...</span>
+{{else if hasTranscript}}
+  <div class="transcript">{{filteredTranscript}}</div>
+  {{#if canExpandCollapse}}
+    <div class="collapse-toggle" {{action "toggleCollapse"}}>
+      <span>{{#if isCollapsed}}Expand{{else}}Collapse{{/if}}</span>
+    </div>
+  {{/if}}
+{{else}}
+  <span class="no-analysis-data">No transcript</span>
+{{/if}}
