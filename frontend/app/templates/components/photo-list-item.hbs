@@ -1,0 +1,7 @@
+{{#if isImage}}
+  {{hpis-image height=120 url=photo.servingUrl on-click=(action "clicked")}}
+{{else if isAudio}}
+  <div class="placeholder" style="background: black;" {{action "clicked"}}></div>
+{{else if isVideo}}
+  <div class="placeholder" style="background: orange;" {{action "clicked"}}></div>
+{{/if}}

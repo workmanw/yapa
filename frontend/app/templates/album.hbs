@@ -20,7 +20,7 @@
         </div>
       {{/if}}
       {{#each photos as |photo|}}
-        {{hpis-image class="cursor-pointer" height=120 url=photo.servingUrl on-click=(action "selectPhoto" photo)}}
+        {{photo-list-item photo=photo on-click=(action "selectPhoto" photo)}}
       {{else}}
         <div class="empty-photos">
           Drop files to upload {{fa-icon "cloud-upload" size=2}}
@@ -29,80 +29,7 @@
     {{/if}}
   </div>
 
-  <div class="image-details {{if selectedPhoto 'visible'}}">
-    <div class="details-header">
-      <div class="close-button" {{action "selectPhoto" null}}>{{fa-icon "times"}}</div>
-      <h3>Photo Details</h3>
-      <div class="refresh-button" {{action "refreshSelectedPhoto"}}>
-        {{fa-icon "refresh" classNameBindings="isRefreshingPhoto:spinning"}}
-      </div>
-    </div>
-    <div class="detail-contents">
-      <div class="details-image">
-        {{hpis-image height=240 url=selectedPhoto.servingUrl}}
-      </div>
-
-      <div class="detail-list">
-        <div class="detail-row">
-          <span class="label">Photo Name:</span>
-          <span class="value">{{selectedPhoto.photoName}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Created On:</span>
-          <span class="value">{{selectedPhoto.createdOn}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Album Id:</span>
-          <span class="value">{{selectedPhoto.album.id}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Album Name:</span>
-          <span class="value">{{selectedPhoto.album.name}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">BlobKey:</span>
-          <span class="value">{{selectedPhoto.blobKey}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Content Type:</span>
-          <span class="value">{{selectedPhoto.content}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Filename:</span>
-          <span class="value">{{selectedPhoto.filename}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">File size:</span>
-          <span class="value">{{selectedPhoto.filesize}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">GCS Path:</span>
-          <span class="value">{{selectedPhoto.gcsPath}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">MD5:</span>
-          <span class="value">{{selectedPhoto.md5}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Serving URL:</span>
-          <span class="value">{{selectedPhoto.servingUrl}}</span>
-        </div>
-      </div>
-
-      {{#if selectedVisionData.hasAnalysisVision}}
-        {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
-        {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
-        {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
-        {{photo-details-vision label="Text" visionDetails=selectedVisionData.texts}}
-      {{else if selectedVisionData.hasAnalysisSpeech}}
-
-      {{else if selectedVisionData.hasAnalysisVideoIntel}}
-        {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
-        {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
-        {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
-      {{/if}}
-    </div>
-  </div>
+  {{photo-details photo=selectedPhoto collapseDetails=(action "selectPhoto" null)}}
 {{/file-uploader}}
 
 {{#modal-wrapper classNames="edit-album-modal" visible=showEditAlbumModal on-close=(action "hideEditAlbum")}}

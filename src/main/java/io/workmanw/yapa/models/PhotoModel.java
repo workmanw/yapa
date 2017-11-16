@@ -219,6 +219,10 @@ public class PhotoModel extends BaseModel {
     jsonObj.addProperty("filesize", this.getFilesize());
     jsonObj.addProperty("servingUrl", this.getServingUrl());
 
+    jsonObj.addProperty("isImage", this.isImage());
+    jsonObj.addProperty("isAudio", this.isAudio());
+    jsonObj.addProperty("isVideo", this.isVideo());
+
     TimeZone tz = TimeZone.getTimeZone("UTC");
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
     df.setTimeZone(tz);

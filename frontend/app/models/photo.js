@@ -13,6 +13,10 @@ export default DS.Model.extend({
   md5: DS.attr('string'),
   servingUrl: DS.attr('string'),
 
+  isImage: DS.attr('boolean'),
+  isAudio: DS.attr('boolean'),
+  isVideo: DS.attr('boolean'),
+
   hasAnalysisVision: DS.attr('boolean'),
   hasAnalysisSpeech: DS.attr('boolean'),
   hasAnalysisVideoIntel: DS.attr('boolean'),

@@ -146,7 +146,9 @@ public class AnalysisVideoIntelModel extends BaseModel {
     StringBuilder strBuilder = new StringBuilder();
     List<VideoIntelItem> videoIntelItems = this.getVideoIntelItems();
     for (VideoIntelItem videoIntelItem : videoIntelItems) {
-      strBuilder.append(videoIntelItem.getDescription() + " ");
+      if (videoIntelItem.getType() != VideoIntelItem.TYPE_FRAME_LABEL) {
+        strBuilder.append(videoIntelItem.getDescription() + " ");
+      }
     }
     return strBuilder.toString();
   }

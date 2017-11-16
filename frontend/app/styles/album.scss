@@ -15,7 +15,7 @@
     }
   }
 
-  .uploading-photo, .hpis-image {
+  .uploading-photo {
     margin: 0 10px 10px 0;
   }
 
@@ -26,80 +26,6 @@
     width: 100vw;
     height: calc(100vh - 60px);
     .fa { margin: 0 10px; }
-  }
-}
-
-
-.image-details {
-  position: fixed;
-  right: -401px;
-  width: 400px;
-  top: 0px;
-  bottom: 0px;
-  background-color: #fafafa;
-  border-left: solid 1px #D3D3D3;
-  transition: right 0.25s ease-in-out;
-
-  &.visible {
-    right: 0px;
-  }
-
-  .details-header {
-    padding: 0px 14px;
-    width: calc(100%-10px);
-    border-bottom: solid 1px #D3D3D3;
-    > * {
-      display: inline-block;
-    }
-    .close-button {
-      font-size: 18px;
-      cursor: pointer;
-    }
-    .refresh-button {
-      font-size: 18px;
-      cursor: pointer;
-      float: right;
-      margin: 15px 5px 0 0;
-    }
-  }
-
-  .detail-contents {
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: absolute;
-    top: 62px;
-    bottom: 0px;
-    padding-bottom: 20px;
-  }
-
-  .details-image {
-    padding: 0 14px;
-    display: flex;
-    justify-content: center;
-  }
-  .detail-list {
-    font-size: 12px;
-    padding: 14px;
-
-    display: table;
-    table-layout: fixed;
-    width:100%;
-    .detail-row {
-      display: table-row;
-      > * {
-        display: table-cell;
-      }
-
-      .label {
-        font-weight: 700;
-        white-space: nowrap;
-        padding-right: 10px;
-        width: 100px;
-      }
-      .value {
-        word-wrap: break-word;
-      }
-    }
   }
 }
 

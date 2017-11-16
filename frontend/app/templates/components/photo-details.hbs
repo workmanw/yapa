@@ -1,0 +1,72 @@
+<div class="details-header">
+  <div class="close-button" {{action "collapseDetails"}}>{{fa-icon "times"}}</div>
+  <h3>Photo Details</h3>
+  <div class="refresh-button" {{action "refreshPhoto"}}>
+    {{fa-icon "refresh" classNameBindings="isRefreshingPhoto:spinning"}}
+  </div>
+</div>
+<div class="detail-contents">
+  <div class="details-image">
+    {{hpis-image height=240 url=photo.servingUrl}}
+  </div>
+
+  <div class="detail-list">
+    <div class="detail-row">
+      <span class="label">Photo Name:</span>
+      <span class="value">{{photo.photoName}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Created On:</span>
+      <span class="value">{{photo.createdOn}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Album Id:</span>
+      <span class="value">{{photo.album.id}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Album Name:</span>
+      <span class="value">{{photo.album.name}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">BlobKey:</span>
+      <span class="value">{{photo.blobKey}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Content Type:</span>
+      <span class="value">{{photo.content}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Filename:</span>
+      <span class="value">{{photo.filename}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">File size:</span>
+      <span class="value">{{photo.filesize}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">GCS Path:</span>
+      <span class="value">{{photo.gcsPath}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">MD5:</span>
+      <span class="value">{{photo.md5}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Serving URL:</span>
+      <span class="value">{{photo.servingUrl}}</span>
+    </div>
+  </div>
+
+  {{#if photo.hasAnalysisVision}}
+    {{photo-details-vision label="Labels" visionDetails=selectedVisionData.labels}}
+    {{photo-details-vision label="Landmarks" visionDetails=selectedVisionData.landmarks}}
+    {{photo-details-vision label="Logos" visionDetails=selectedVisionData.logos}}
+    {{photo-details-vision label="Text" visionDetails=selectedVisionData.texts}}
+  {{else if photo.hasAnalysisSpeech}}
+
+  {{else if photo.hasAnalysisVideoIntel}}
+    {{photo-details-vision label="Segments" visionDetails=selectedVisionData.segments}}
+    {{photo-details-vision label="Shots" visionDetails=selectedVisionData.shots}}
+    {{photo-details-vision label="Frames" visionDetails=selectedVisionData.frames}}
+  {{/if}}
+</div>
