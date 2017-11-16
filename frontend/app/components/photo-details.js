@@ -7,6 +7,8 @@ export default Ember.Component.extend({
   photo: null,
   collapseDetails: null,
 
+  isImageDocked: false,
+
   _photoDidChange: Ember.observer('photo', function() {
     this.loadAnalysisData();
   }),
@@ -58,6 +60,10 @@ export default Ember.Component.extend({
 
     collapseDetails() {
       Ember.tryInvoke(this.attrs, 'collapseDetails');
+    },
+
+    toggleImageDocking() {
+      this.toggleProperty('isImageDocked');
     }
   }
 });

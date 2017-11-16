@@ -6,7 +6,11 @@
   </div>
 </div>
 <div class="detail-contents">
-  <div class="details-image">
+  <div class="details-image {{if isImageDocked 'is-docked'}}" {{action "toggleImageDocking"}}>
+    <div class="docking-arrow">
+      {{fa-icon "arrow-up"}}
+    </div>
+
     {{#if photo.servingUrl}}
       {{hpis-image height=240 url=photo.servingUrl}}
     {{else}}
