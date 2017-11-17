@@ -4,15 +4,14 @@
   <div class="refresh-button" {{action "refreshPhoto"}}>
     {{fa-icon "refresh" classNameBindings="isRefreshingPhoto:spinning"}}
   </div>
+  <div class="docking-arrow {{if isImageDocked 'is-docked'}}" {{action "toggleImageDocking"}}>
+    {{fa-icon "arrow-up"}}
+  </div>
 </div>
 <div class="detail-contents">
-  <div class="details-image {{if isImageDocked 'is-docked'}}" {{action "toggleImageDocking"}}>
-    <div class="docking-arrow">
-      {{fa-icon "arrow-up"}}
-    </div>
-
+  <div class="details-image {{if isImageDocked 'is-docked'}}">
     {{#if photo.servingUrl}}
-      {{hpis-image height=240 url=photo.servingUrl}}
+      {{hpis-image height=400 url=photo.servingUrl}}
     {{else}}
       {{photo-placeholder larger=true photo=photo}}
     {{/if}}

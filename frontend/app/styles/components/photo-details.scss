@@ -32,6 +32,24 @@ $border-color: #D3D3D3;
       float: right;
       margin: 15px 5px 0 0;
     }
+    .docking-arrow {
+      font-size: 18px;
+      cursor: pointer;
+      float: right;
+      margin: 23px 14px 0 0;
+
+      i {
+        height: 13px;
+        width: 13px;
+        transform: rotate(225deg);
+        font-size: 20px;
+      }
+
+      &.is-docked {
+        margin: 14px 14px 0 0;
+        i { transform: rotate(45deg); }
+      }
+    }
   }
 
   .detail-contents {
@@ -51,26 +69,15 @@ $border-color: #D3D3D3;
     padding-bottom: 10px;
     border-bottom: 1px solid $border-color;
 
-    .docking-arrow {
-      background: white;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      color: black;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      border: 1px solid $border-color;
-      border-left-width: 0px;
-      border-bottom-width: 0px;
-
-      i {
-        margin: 4px 0px 0px 4px;
-        height: 13px;
-        width: 13px;
-        vertical-align: top;
-        transform: rotate(225deg);
-      }
+    .photo-placeholder {
+      width: 100%;
+      height: 240px;
+    }
+    .hpis-image {
+      max-height: 240px !important;
+      max-width: 372px;
+      margin: auto;
+      display: block;
     }
 
     &.is-docked {
@@ -79,29 +86,14 @@ $border-color: #D3D3D3;
       bottom: 0px;
       border: 1px solid $border-color;
 
-      .docking-arrow {
-        bottom: initial;
-        left: initial;
-        top: 0;
-        right: 0;
-        border-left-width: 1px;
-        border-bottom-width: 1px;
-        border-top-width: 0px;
-        border-right-width: 0px;
-
-        i { transform: rotate(45deg); }
+      width: 572px;
+      .photo-placeholder {
+        height: 400px
       }
-    }
-
-    .photo-placeholder {
-      width: 100%;
-      height: 240px;
-    }
-    .hpis-image {
-      max-height: 240px;
-      max-width: 372px;
-      margin: auto;
-      display: block;
+      .hpis-image {
+        max-height: 400px !important;
+        max-width: 572px;
+      }
     }
   }
 

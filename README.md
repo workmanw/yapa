@@ -5,6 +5,7 @@ YAPA (Yet Another Photo App)
 
 * `gcloud`
 * `ember`
+* `node` & `yarn`
 
 ## Setup
 
@@ -16,23 +17,26 @@ YAPA (Yet Another Photo App)
 
 `gcloud app create`
 
-### Create Cloud Storage bucket
-
-First, enable billing: https://support.google.com/cloud/answer/6293499#enable-billing
-
-`gsutil mb gs://yapa-assets`
-
 ### Enable the Datastore API
 
 https://console.cloud.google.com/datastore/entities/query
 
 `gcloud service-management enable datastore.googleapis.com`
 
-### Turn on Vision API
+### Create Cloud Storage bucket
+
+First, enable billing: https://support.google.com/cloud/answer/6293499#enable-billing
+
+`gsutil mb gs://yapa-assets`
+
+### Turn on Analysis APIs
 
 https://cloud.google.com/vision/docs/before-you-begin
 
 `gcloud service-management enable vision.googleapis.com`
+`gcloud service-management enable speech.googleapis.com`
+`gcloud service-management enable videointelligence.googleapis.com`
+`gcloud service-management enable language.googleapis.com`
 
 ### [Optional] Check Configuration
 

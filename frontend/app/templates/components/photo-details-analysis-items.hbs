@@ -11,7 +11,17 @@
     </tr>
     {{#each filteredItems as |analysisItem|}}
       <tr>
-        <th>{{#if isSpeech}}{{analysisItem.name}}{{else}}{{analysisItem.description}}{{/if}}</th>
+        <th>
+          {{#if isSpeech}}
+            {{#if analysisItem.wikipediaUrl}}
+              <a href="{{analysisItem.wikipediaUrl}}" target="_blank">{{analysisItem.name}}</a>
+            {{else}}
+              {{analysisItem.name}}
+            {{/if}}
+          {{else}}
+            {{analysisItem.description}}
+          {{/if}}
+        </th>
         <td>{{analysisItem.mid}}</td>
         <th>{{#if isSpeech}}{{analysisItem.salience}}{{else}}{{analysisItem.score}}{{/if}}</th>
       </tr>
