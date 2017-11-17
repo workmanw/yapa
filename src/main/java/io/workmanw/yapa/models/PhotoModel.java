@@ -1,11 +1,5 @@
 package io.workmanw.yapa.models;
 
-import io.workmanw.yapa.utils.VisionClient;
-import io.workmanw.yapa.utils.VideoIntelClient;
-import io.workmanw.yapa.utils.SearchClient;
-import io.workmanw.yapa.utils.SpeechClient;
-import io.workmanw.yapa.utils.TaskClient;
-
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.images.ImagesService;
@@ -40,9 +34,6 @@ public class PhotoModel extends BaseModel {
   private Date createdOn;
 
   private DatastoreKey album;
-  private DatastoreKey analysisVision;
-  private DatastoreKey analysisSpeech;
-  private DatastoreKey analysisVideoIntel;
   private String photoName;
   private String blobKey;
   private String contentType;
@@ -74,45 +65,6 @@ public class PhotoModel extends BaseModel {
   }
   public String getAlbumId() {
     return Long.toString(this.getAlbum().id(), 10);
-  }
-
-  public DatastoreKey getAnalysisVision() {
-    return this.analysisVision;
-  }
-  public void setAnalysisVision(DatastoreKey analysisVision) {
-    this.analysisVision = analysisVision;
-  }
-  public AnalysisVisionModel fetchAnalysisVision() {
-    return AnalysisVisionModel.getByKey(this.getAnalysisVision());
-  }
-  public Boolean hasAnalysisVision() {
-    return this.getAnalysisVision() != null;
-  }
-
-  public DatastoreKey getAnalysisSpeech() {
-    return this.analysisSpeech;
-  }
-  public void setAnalysisSpeech(DatastoreKey analysisSpeech) {
-    this.analysisSpeech = analysisSpeech;
-  }
-  public AnalysisSpeechModel fetchAnalysisSpeech() {
-    return AnalysisSpeechModel.getByKey(this.getAnalysisSpeech());
-  }
-  public Boolean hasAnalysisSpeech() {
-    return this.getAnalysisSpeech() != null;
-  }
-
-  public DatastoreKey getAnalysisVideoIntel() {
-    return this.analysisVideoIntel;
-  }
-  public void setAnalysisVideoIntel(DatastoreKey analysisVideoIntel) {
-    this.analysisVideoIntel = analysisVideoIntel;
-  }
-  public AnalysisVideoIntelModel fetchAnalysisVideoIntel() {
-    return AnalysisVideoIntelModel.getByKey(this.getAnalysisVideoIntel());
-  }
-  public Boolean hasAnalysisVideoIntel() {
-    return this.getAnalysisVideoIntel() != null;
   }
 
   public Date getCreatedOn() {
@@ -229,10 +181,6 @@ public class PhotoModel extends BaseModel {
     String createdOn = df.format(this.getCreatedOn());
     jsonObj.addProperty("createdOn", createdOn);
 
-    jsonObj.addProperty("hasAnalysisVision", this.hasAnalysisVision());
-    jsonObj.addProperty("hasAnalysisSpeech", this.hasAnalysisSpeech());
-    jsonObj.addProperty("hasAnalysisVideoIntel", this.hasAnalysisVideoIntel());
-
     return jsonObj;
   }
 
@@ -253,97 +201,6 @@ public class PhotoModel extends BaseModel {
     }
   }
 
-  // ................................................................
-  // Analysis support
-  //
-  public void populateAnalysisData() {
-    this.schedulePostProcessAction("_populateAnalysisData");
-  }
-
-  public void _populateAnalysisData() {
-    if (this.isImage()) {
-      this.populateVisionData();
-      this.saveModel();
-    } else if (this.isAudio()) {
-      this.transcribeAudioFile();
-      this.saveModel();
-    } else if (this.isVideo()) {
-      this.populateVideoIntelligence();
-      this.saveModel();
-    }
-  }
-
-  public void populateVisionData() {
-    VisionClient visionClient = new VisionClient();
-    AnalysisVisionModel analysisVision = visionClient.analyzeImage("gs:/" + this.getGcsPath());
-
-    analysisVision = (AnalysisVisionModel) analysisVision.createModel();
-    this.setAnalysisVision(analysisVision.getKey());
-    this.saveModel();
-  }
-
-  public void transcribeAudioFile() {
-    SpeechClient speechClient = new SpeechClient();
-    AnalysisSpeechModel analyzeSpeech = speechClient.analyzeSpeech("gs:/" + this.getGcsPath());
-
-    analyzeSpeech = (AnalysisSpeechModel) analyzeSpeech.createModel();
-    this.setAnalysisSpeech(analyzeSpeech.getKey());
-    this.saveModel();
-  }
-
-  public void populateVideoIntelligence() {
-    VideoIntelClient videoClient = new VideoIntelClient();
-    AnalysisVideoIntelModel analysisVideoIntel = videoClient.analyzeVideo("gs:/" + this.getGcsPath());
-
-    analysisVideoIntel = (AnalysisVideoIntelModel) analysisVideoIntel.createModel();
-    this.setAnalysisVideoIntel(analysisVideoIntel.getKey());
-    this.saveModel();
-  }
-
-  // ................................................................
-  // Search support
-  //
-  public String getSearchText() {
-    StringBuilder strBuilder = new StringBuilder();
-    strBuilder.append(this.getPhotoName());
-
-    if (this.hasAnalysisVision()) {
-      AnalysisVisionModel visionModel = this.fetchAnalysisVision();
-      strBuilder.append(visionModel.getSearchText());
-    }
-    if (this.hasAnalysisSpeech()) {
-      AnalysisSpeechModel speechModel = this.fetchAnalysisSpeech();
-      strBuilder.append(speechModel.getSearchText());
-    }
-    if (this.hasAnalysisVideoIntel()) {
-      AnalysisVideoIntelModel videoIntelModel = this.fetchAnalysisVideoIntel();
-      strBuilder.append(videoIntelModel.getSearchText());
-    }
-
-    return strBuilder.toString();
-  }
-
-  public void createSearchDoc() {
-    this.schedulePostProcessAction("_createSearchDoc");
-  }
-  public void _createSearchDoc() {
-    SearchClient sc = new SearchClient();
-    sc.createPhotoDocument(this);
-  }
-
-
-  public void updateSearchDoc() {
-    this.schedulePostProcessAction("_updateSearchDoc");
-  }
-  public void _updateSearchDoc() {
-    SearchClient sc = new SearchClient();
-    sc.updatePhotoDocument(this);
-  }
-
-  public static void deleteSearchDoc(String id) {
-    SearchClient sc = new SearchClient();
-    sc.deletePhotoDocument(id);
-  }
 
   // ................................................................
   // Static utils
@@ -358,19 +215,4 @@ public class PhotoModel extends BaseModel {
     return BaseModel.getByKey(PhotoModel.class, key);
   }
 
-  public static void postProcess(String id, String action) {
-    if (action.equals("CREATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      photo.populateAnalysisData();
-      photo.createSearchDoc();
-
-      AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
-      albumModel.addPreviewImageUrl(photo.getServingUrl());
-    } else if (action.equals("UPDATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      photo.updateSearchDoc();
-    } else if (action.equals("DELETE")) {
-      PhotoModel.deleteSearchDoc(id);
-    }
-  }
 }

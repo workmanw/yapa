@@ -1,7 +1,6 @@
 package io.workmanw.yapa.models;
 
 import com.jmethods.catatumbo.DatastoreKey;
-import io.workmanw.yapa.utils.TaskClient;
 
 import com.jmethods.catatumbo.EntityManagerFactory;
 import com.jmethods.catatumbo.EntityManager;
@@ -17,7 +16,6 @@ public class BaseModel extends Object {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     BaseModel newModel = em.insert(this);
-    newModel.schedulePostProcessCrud("CREATE");
     return newModel;
   }
 
@@ -25,28 +23,12 @@ public class BaseModel extends Object {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.update(this);
-    this.schedulePostProcessCrud("UPDATE");
   }
 
   public void deleteModel() {
     EntityManagerFactory emf = EntityManagerFactory.getInstance();
     EntityManager em = emf.createDefaultEntityManager();
     em.delete(this);
-    this.schedulePostProcessCrud("DELETE");
-  }
-
-  public void schedulePostProcessCrud(String action) {
-    String kind = this.getClass().getSimpleName();
-    String sId = Long.toString(this.getId(), 10);
-    TaskClient taskClient = new TaskClient();
-    taskClient.scheduleModelPostProcessCrud(kind, sId, action);
-  }
-
-  public void schedulePostProcessAction(String methodName) {
-    String kind = this.getClass().getSimpleName();
-    String sId = Long.toString(this.getId(), 10);
-    TaskClient taskClient = new TaskClient();
-    taskClient.scheduleModelPostProcessAction(kind, sId, methodName);
   }
 
   public JsonObject toJson() {

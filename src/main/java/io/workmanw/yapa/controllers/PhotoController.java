@@ -2,11 +2,7 @@ package io.workmanw.yapa.controllers;
 
 import static io.workmanw.yapa.Constants.GCS_BUCKET;
 import io.workmanw.yapa.models.AlbumModel;
-import io.workmanw.yapa.models.AnalysisSpeechModel;
-import io.workmanw.yapa.models.AnalysisVisionModel;
-import io.workmanw.yapa.models.AnalysisVideoIntelModel;
 import io.workmanw.yapa.models.PhotoModel;
-import io.workmanw.yapa.utils.SearchClient;
 
 import java.util.Map;
 import java.util.List;
@@ -66,17 +62,6 @@ public class PhotoController extends BaseController<PhotoModel> {
     return jsonObj.toString();
   }
 
-  @RequestMapping(value="/search", method=RequestMethod.GET)
-  public String searchPhotos(@RequestParam("search") String searchText) {
-    SearchClient sc = new SearchClient();
-    List<Long> photoIds = sc.searchPhotos(searchText);
-    EntityManagerFactory emf = EntityManagerFactory.getInstance();
-    EntityManager em = emf.createDefaultEntityManager();
-    List<PhotoModel> photos = em.loadById(PhotoModel.class, photoIds);
-
-    return this.serialize(photos);
-  }
-
   public String uploadCallback(BlobKey bk, Map<String, String> parameters) {
     BlobInfo bi = this.getBlobInfo(bk);
 
@@ -85,42 +70,6 @@ public class PhotoController extends BaseController<PhotoModel> {
     photo.fromBlobInfo(album, bi);
     photo = (PhotoModel) photo.createModel();
     return this.serialize(photo);
-  }
-
-  @RequestMapping(value="/{id}/analysis/vision", method=RequestMethod.GET)
-  public String getAnalysisVision(@PathVariable long id) {
-    PhotoModel photo = this.getEntityById(id);
-
-    if (!photo.hasAnalysisVision()) {
-      throw new ResourceNotFoundException();
-    }
-
-    AnalysisVisionModel analysisVision = photo.fetchAnalysisVision();
-    return analysisVision.toJson().toString();
-  }
-
-  @RequestMapping(value="/{id}/analysis/speech", method=RequestMethod.GET)
-  public String getAnalysisSpeecht(@PathVariable long id) {
-    PhotoModel photo = this.getEntityById(id);
-
-    if (!photo.hasAnalysisSpeech()) {
-      throw new ResourceNotFoundException();
-    }
-
-    AnalysisSpeechModel analysisSpeech = photo.fetchAnalysisSpeech();
-    return analysisSpeech.toJson().toString();
-  }
-
-  @RequestMapping(value="/{id}/analysis/video-intel", method=RequestMethod.GET)
-  public String getAnalysisVideoIntel(@PathVariable long id) {
-    PhotoModel photo = this.getEntityById(id);
-
-    if (!photo.hasAnalysisVideoIntel()) {
-      throw new ResourceNotFoundException();
-    }
-
-    AnalysisVideoIntelModel analysisVideoIntel = photo.fetchAnalysisVideoIntel();
-    return analysisVideoIntel.toJson().toString();
   }
 
   protected BlobInfo getBlobInfo(BlobKey bk) {
