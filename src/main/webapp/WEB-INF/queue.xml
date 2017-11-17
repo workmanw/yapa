@@ -1,6 +1,0 @@
-<queue-entries>
-  <queue>
-    <name>post-process</name>
-    <rate>250/s</rate>
-  </queue>
-</queue-entries>

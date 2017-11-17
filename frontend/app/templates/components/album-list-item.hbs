@@ -1,8 +1,0 @@
-<label>{{album.name}}</label>
-<div class="preview-photos {{unless album.previewImageUrls 'is-empty'}}">
-  {{#each album.previewImageUrls as |url|}}
-    {{hpis-image url=url size=80 square=true}}
-  {{else}}
-    {{fa-icon "image" size=3}}
-  {{/each}}
-</div>
