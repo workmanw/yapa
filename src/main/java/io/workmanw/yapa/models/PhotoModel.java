@@ -2,9 +2,7 @@ package io.workmanw.yapa.models;
 
 import io.workmanw.yapa.utils.VisionClient;
 import io.workmanw.yapa.utils.VideoIntelClient;
-import io.workmanw.yapa.utils.SearchClient;
 import io.workmanw.yapa.utils.SpeechClient;
-import io.workmanw.yapa.utils.TaskClient;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -300,50 +298,6 @@ public class PhotoModel extends BaseModel {
     this.saveModel();
   }
 
-  // ................................................................
-  // Search support
-  //
-  public String getSearchText() {
-    StringBuilder strBuilder = new StringBuilder();
-    strBuilder.append(this.getPhotoName());
-
-    if (this.hasAnalysisVision()) {
-      AnalysisVisionModel visionModel = this.fetchAnalysisVision();
-      strBuilder.append(visionModel.getSearchText());
-    }
-    if (this.hasAnalysisSpeech()) {
-      AnalysisSpeechModel speechModel = this.fetchAnalysisSpeech();
-      strBuilder.append(speechModel.getSearchText());
-    }
-    if (this.hasAnalysisVideoIntel()) {
-      AnalysisVideoIntelModel videoIntelModel = this.fetchAnalysisVideoIntel();
-      strBuilder.append(videoIntelModel.getSearchText());
-    }
-
-    return strBuilder.toString();
-  }
-
-  public void createSearchDoc() {
-    this.schedulePostProcessAction("_createSearchDoc");
-  }
-  public void _createSearchDoc() {
-    SearchClient sc = new SearchClient();
-    sc.createPhotoDocument(this);
-  }
-
-
-  public void updateSearchDoc() {
-    this.schedulePostProcessAction("_updateSearchDoc");
-  }
-  public void _updateSearchDoc() {
-    SearchClient sc = new SearchClient();
-    sc.updatePhotoDocument(this);
-  }
-
-  public static void deleteSearchDoc(String id) {
-    SearchClient sc = new SearchClient();
-    sc.deletePhotoDocument(id);
-  }
 
   // ................................................................
   // Static utils
@@ -362,15 +316,6 @@ public class PhotoModel extends BaseModel {
     if (action.equals("CREATE")) {
       PhotoModel photo = PhotoModel.getById(id);
       photo.populateAnalysisData();
-      photo.createSearchDoc();
-
-      AlbumModel albumModel = AlbumModel.getById(photo.getAlbumId());
-      albumModel.addPreviewImageUrl(photo.getServingUrl());
-    } else if (action.equals("UPDATE")) {
-      PhotoModel photo = PhotoModel.getById(id);
-      photo.updateSearchDoc();
-    } else if (action.equals("DELETE")) {
-      PhotoModel.deleteSearchDoc(id);
     }
   }
 }

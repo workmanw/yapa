@@ -7,7 +7,7 @@ export default Ember.Component.extend({
   isDocked: true,
 
   _didChange: Ember.observer('visionData', 'isDocked', function() {
-    Ember.run.once(this, this.drawCanvas);
+    // Ember.run.once(this, this.drawCanvas);
   }),
 
   drawCanvas() {
