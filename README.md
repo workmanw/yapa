@@ -27,7 +27,7 @@ https://console.cloud.google.com/datastore/entities/query
 
 First, enable billing: https://support.google.com/cloud/answer/6293499#enable-billing
 
-`gsutil mb gs://yapa-assets`
+`gsutil mb gs://yapa-devfest-assets`
 
 ### Turn on Analysis APIs
 
