@@ -60,6 +60,7 @@ export default Ember.Component.extend({
 
     collapseDetails() {
       Ember.tryInvoke(this.attrs, 'collapseDetails');
+      this.set('isImageDocked', false);
     },
 
     toggleImageDocking() {

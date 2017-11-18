@@ -8,16 +8,18 @@ export default Ember.Component.extend({
   items: null,
   isLoading: false,
   type: '', // vision | speech | videoIntel
+  itemTypeLabel: '',
 
   isSpeech: Ember.computed.equal('type', 'speech'),
 
   typePrefix: Ember.computed('type', function() {
     let type = this.get('type');
+    let itemTypeLabel = this.get('itemTypeLabel');
     return ({
       'vision': 'Vision',
       'speech': 'Natural Language',
-      'videoIntel': 'Video Intelligence'
-    }[type] || '');
+      'videoIntel': 'Video Intel'
+    }[type] || '') + ` - ${itemTypeLabel}`;
   }),
 
   sortedItems: Ember.computed('items.[]', 'isSpeech', function() {

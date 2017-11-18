@@ -65,16 +65,16 @@
   </div>
 
   {{#if photo.hasAnalysisVision}}
-    {{photo-details-analysis-items label="Labels" type="vision" items=selectedVisionData.labels isLoading=isLoadingAnalysisVision}}
-    {{photo-details-analysis-items label="Landmarks" type="vision" items=selectedVisionData.landmarks isLoading=isLoadingAnalysisVision}}
-    {{photo-details-analysis-items label="Logos" type="vision" items=selectedVisionData.logos isLoading=isLoadingAnalysisVision}}
-    {{photo-details-analysis-items label="Text" type="vision" items=selectedVisionData.texts isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items type="vision" itemTypeLabel="Labels" items=selectedVisionData.labels isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items type="vision" itemTypeLabel="Landmarks" items=selectedVisionData.landmarks isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items type="vision" itemTypeLabel="Logos" items=selectedVisionData.logos isLoading=isLoadingAnalysisVision}}
+    {{photo-details-analysis-items type="vision" itemTypeLabel="Text" items=selectedVisionData.texts isLoading=isLoadingAnalysisVision}}
   {{else if photo.hasAnalysisSpeech}}
     {{photo-details-analysis-transcript transcript=selectedSpeechData.transcript isLoading=isLoadingAnalysisSpeech}}
-    {{photo-details-analysis-items label="Entities" type="speech" items=selectedSpeechData.entity isLoading=isLoadingAnalysisSpeech}}
+    {{photo-details-analysis-items type="speech" itemTypeLabel="Entities" items=selectedSpeechData.entity isLoading=isLoadingAnalysisSpeech}}
   {{else if photo.hasAnalysisVideoIntel}}
-    {{photo-details-analysis-items label="Segments" type="videoIntel" items=selectedVideoIntelData.segments isLoading=isLoadingAnalysisVideo}}
-    {{photo-details-analysis-items label="Shots" type="videoIntel" items=selectedVideoIntelData.shots isLoading=isLoadingAnalysisVideo}}
-    {{photo-details-analysis-items label="Frames" type="videoIntel" items=selectedVideoIntelData.frames isLoading=isLoadingAnalysisVideo}}
+    {{photo-details-analysis-items type="videoIntel" itemTypeLabel="Segments" items=selectedVideoIntelData.segments isLoading=isLoadingAnalysisVideo}}
+    {{photo-details-analysis-items type="videoIntel" itemTypeLabel="Shots" items=selectedVideoIntelData.shots isLoading=isLoadingAnalysisVideo}}
+    {{photo-details-analysis-items type="videoIntel" itemTypeLabel="Frames" items=selectedVideoIntelData.frames isLoading=isLoadingAnalysisVideo}}
   {{/if}}
 </div>
