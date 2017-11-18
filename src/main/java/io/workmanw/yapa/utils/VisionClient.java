@@ -1,17 +1,12 @@
 package io.workmanw.yapa.utils;
 
+import com.google.cloud.vision.v1.*;
 import io.workmanw.yapa.models.AnalysisVisionModel;
 import io.workmanw.yapa.models.AnalysisVisionModel.VisionItem;
 
-import com.google.cloud.vision.v1.AnnotateImageRequest;
-import com.google.cloud.vision.v1.AnnotateImageResponse;
-import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
-import com.google.cloud.vision.v1.EntityAnnotation;
-import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Feature.Type;
-import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.cloud.vision.v1.ImageSource;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +23,14 @@ public class VisionClient {
     List<VisionItem> visionLandmarks = this.processVisionAnalysis(gcsPath, Type.LANDMARK_DETECTION, VisionItem.TYPE_LANDMARK);
     List<VisionItem> visionLogos = this.processVisionAnalysis(gcsPath, Type.LOGO_DETECTION, VisionItem.TYPE_LOGO);
     List<VisionItem> visionTexts = this.processVisionAnalysis(gcsPath, Type.TEXT_DETECTION, VisionItem.TYPE_TEXT);
+    List<VisionItem> visionFaces = this.processVisionAnalysis(gcsPath, Type.FACE_DETECTION, VisionItem.TYPE_FACE);
 
     List<VisionItem> allVisionItems = new ArrayList<>();
     allVisionItems.addAll(visionLabels);
     allVisionItems.addAll(visionLandmarks);
     allVisionItems.addAll(visionLogos);
     allVisionItems.addAll(visionTexts);
+    allVisionItems.addAll(visionFaces);
 
     return new AnalysisVisionModel(allVisionItems);
   }
@@ -73,6 +70,7 @@ public class VisionClient {
   protected List<VisionItem> mapVisionModel(AnnotateImageResponse resp, Type detectionType, String modelType) {
     List<VisionItem> visionModels = new ArrayList<>();
     List<EntityAnnotation> annotations = null;
+    List<FaceAnnotation> faceAnnotations = null;
 
     if (detectionType == Type.LABEL_DETECTION) {
       annotations = resp.getLabelAnnotationsList();
@@ -82,6 +80,8 @@ public class VisionClient {
       annotations = resp.getLogoAnnotationsList();
     } else if (detectionType == Type.TEXT_DETECTION) {
       annotations = resp.getTextAnnotationsList();
+    } else if (detectionType == Type.FACE_DETECTION) {
+      faceAnnotations = resp.getFaceAnnotationsList();
     }
 
     if (annotations != null) {
@@ -94,6 +94,24 @@ public class VisionClient {
         visionItem.setDescription(description);
         visionItem.setScore(annotation.getScore());
         visionModels.add(visionItem);
+      }
+    } else if (faceAnnotations != null) {
+      for (FaceAnnotation faceAnnotation : faceAnnotations) {
+        BoundingPoly facePoly = faceAnnotation.getFdBoundingPoly();
+        VisionItem faceVisionItem = new VisionItem();
+        faceVisionItem.setType(modelType);
+
+        List<Vertex> vertices = facePoly.getVerticesList();
+        JsonArray a = new JsonArray();
+        for (Vertex v : vertices) {
+          JsonObject o = new JsonObject();
+          o.addProperty("x", v.getX());
+          o.addProperty("Y", v.getY());
+          a.add(o);
+        }
+
+        faceVisionItem.setVerticesJson(a.toString());
+        visionModels.add(faceVisionItem);
       }
     }
 

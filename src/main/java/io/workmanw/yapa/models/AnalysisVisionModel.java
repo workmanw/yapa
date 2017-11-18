@@ -16,11 +16,13 @@ public class AnalysisVisionModel extends BaseModel {
     public static final String TYPE_LANDMARK = "Landmark";
     public static final String TYPE_LOGO = "Logo";
     public static final String TYPE_TEXT = "Text";
+    public static final String TYPE_FACE = "Face";
 
     private String type;
     private String mid;
     private String description;
     private float score;
+    private String verticesJson;
 
     public String getType() {
       return this.type;
@@ -54,11 +56,16 @@ public class AnalysisVisionModel extends BaseModel {
       this.score = score;
     }
 
+    public String getVerticesJson() { return this.verticesJson; }
+
+    public void setVerticesJson(String verticesJson) { this.verticesJson = verticesJson; }
+
     public JsonObject toJson() {
       JsonObject jsonObj = new JsonObject();
       jsonObj.addProperty("mid", this.getMid());
       jsonObj.addProperty("description", this.getDescription());
       jsonObj.addProperty("score", this.getScore());
+      jsonObj.addProperty("faceVertices", this.getVerticesJson());
       return jsonObj;
     }
   }
@@ -118,6 +125,10 @@ public class AnalysisVisionModel extends BaseModel {
     return this.visionItemsByType(VisionItem.TYPE_TEXT);
   }
 
+  public List<VisionItem> getFaceVertices() {
+    return this.visionItemsByType(VisionItem.TYPE_FACE);
+  }
+
   protected List<VisionItem> visionItemsByType(String type) {
     List<VisionItem> results = new ArrayList<>();
     for (VisionItem visionItem : this.getVisionItems()) {
@@ -134,6 +145,7 @@ public class AnalysisVisionModel extends BaseModel {
     visionJsonObj.add("landmarks", this.visionItemsToJson(this.getVisionLandmarks()));
     visionJsonObj.add("logos", this.visionItemsToJson(this.getVisionLogos()));
     visionJsonObj.add("texts", this.visionItemsToJson(this.getVisionTexts()));
+    visionJsonObj.add("faces", this.visionItemsToJson(this.getFaceVertices()));
     return visionJsonObj;
   }
 

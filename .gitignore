@@ -26,3 +26,6 @@ nbdist/
 
 ### Ember Build ###
 src/main/webapp/ember-dist
+
+### Assets ###
+assets/no-commit

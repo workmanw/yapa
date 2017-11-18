@@ -11,7 +11,8 @@
 <div class="detail-contents">
   <div class="details-image {{if isImageDocked 'is-docked'}}">
     {{#if photo.servingUrl}}
-      {{hpis-image height=400 url=photo.servingUrl}}
+      {{hpis-image fullSize=true url=photo.servingUrl}}
+      {{photo-details-analysis-faces isDocked=isImageDocked visionData=selectedVisionData}}
     {{else}}
       {{photo-placeholder larger=true photo=photo}}
     {{/if}}
