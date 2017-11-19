@@ -10,6 +10,10 @@ export default Ember.Component.extend({
   isImageDocked: false,
 
   _photoDidChange: Ember.observer('photo', function() {
+    let photo = this.get('photo');
+    if (photo) {
+      photo.reload();
+    }
     this.loadAnalysisData();
   }),
 
