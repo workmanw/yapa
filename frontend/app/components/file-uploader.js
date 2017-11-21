@@ -21,23 +21,23 @@ export default Ember.Component.extend({
       return false;
     };
 
-    $('body').on('dragover', (evt) => {
+    this._bodyDragOver = (evt) => {
       if(dragDropEventHasFiles(evt)) {
         this.set('showDropZone', true);
         // If it's a file drop, go a head and eat it to prevent navigation
         return false;
       }
-    });
+    };
 
-    $('body').on('dragleave', (evt) => {
+    this._bodyDragLeave = (evt) => {
       if(dragDropEventHasFiles(evt)) {
         this.set('showDropZone', false);
         // If it's a file drop, eat it to prevent navigation
         return false;
       }
-    });
+    };
 
-    $('body').on('drop', (evt) => {
+    this._bodyDrop = (evt) => {
       if(dragDropEventHasFiles(evt)) {
         this.set('showDropZone', false);
 
@@ -47,6 +47,24 @@ export default Ember.Component.extend({
         // If it's a file drop, eat it to prevent navigation
         return false;
       }
-    });
+    };
+
+    $('body').on('dragover', this._bodyDragOver);
+    $('body').on('dragleave', this._bodyDragLeave);
+    $('body').on('drop', this._bodyDrop);
+  },
+
+  willDestroyElement() {
+    if (this._bodyDragOver) {
+      $('body').off('dragover', this._bodyDragOver);
+    }
+    if (this._bodyDragLeave) {
+      $('body').off('dragleave', this._bodyDragLeave);
+    }
+    if (this._bodyDrop) {
+      $('body').off('drop', this._bodyDrop);
+    }
+
+    this._super(...arguments);
   }
 });
