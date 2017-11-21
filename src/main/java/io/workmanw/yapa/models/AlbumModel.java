@@ -1,9 +1,10 @@
 package io.workmanw.yapa.models;
 
-import com.jmethods.catatumbo.DatastoreKey;
-import com.jmethods.catatumbo.Entity;
-import com.jmethods.catatumbo.Identifier;
-import com.jmethods.catatumbo.Key;
+import com.jmethods.catatumbo.*;
+
+import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreOptions;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -92,5 +93,31 @@ public class AlbumModel extends BaseModel {
   }
   public static AlbumModel getByKey(DatastoreKey key) {
     return BaseModel.getByKey(AlbumModel.class, key);
+  }
+
+  public static List<PhotoModel> queryPhotos(String albumId) {
+    // This should really be refactor into a Query Manager class(es)
+    // This stuff goes on in the controllers and the models.
+    long id = Long.parseLong(albumId, 10);
+    Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+    KeyFactory keyFactory = datastore.newKeyFactory().setKind("Album");
+    com.google.cloud.datastore.Key dsKey = keyFactory.newKey(id);
+    DatastoreKey albumKey = new DefaultDatastoreKey(dsKey);
+
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    EntityManager em = emf.createDefaultEntityManager();
+    EntityQueryRequest request = em.createEntityQueryRequest("SELECT * FROM Photo WHERE album=@1 ORDER BY createdOn DESC");
+    request.addPositionalBinding(albumKey);
+    QueryResponse<PhotoModel> response = em.executeEntityQueryRequest(PhotoModel.class, request);
+    return response.getResults();
+  }
+
+  public static void postProcess(String id, String action) {
+    if (action.equals("DELETE")) {
+      List<PhotoModel> photos = AlbumModel.queryPhotos(id);
+      for (PhotoModel photo : photos) {
+        photo.deleteModel();
+      }
+    }
   }
 }
